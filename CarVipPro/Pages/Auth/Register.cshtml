@@ -1,0 +1,49 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Auth.RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+<h2 class="mb-3">Đăng ký</h2>
+
+<form method="post" class="card p-3">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Input.FullName" class="form-label"></label>
+        <input asp-for="Input.FullName" class="form-control" />
+        <span asp-validation-for="Input.FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.Email" class="form-label"></label>
+        <input asp-for="Input.Email" class="form-control" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.Phone" class="form-label"></label>
+        <input asp-for="Input.Phone" class="form-control" />
+        <span asp-validation-for="Input.Phone" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label"></label>
+        <input asp-for="Input.Password" type="password" class="form-control" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Đăng ký</button>
+    <a asp-page="./Login" class="btn btn-link">Đã có tài khoản? Đăng nhập</a>
+
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="text-danger mt-2">@Model.Error</div>
+    }
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
