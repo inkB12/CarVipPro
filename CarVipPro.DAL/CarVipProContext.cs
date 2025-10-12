@@ -26,13 +26,9 @@ public partial class CarVipProContext : DbContext
 
     public virtual DbSet<ElectricVehicle> ElectricVehicles { get; set; }
 
-    public virtual DbSet<Feedback> Feedbacks { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-
-    public virtual DbSet<Promotion> Promotions { get; set; }
 
     public virtual DbSet<VehicleCategory> VehicleCategories { get; set; }
 
@@ -44,7 +40,7 @@ public partial class CarVipProContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Account__3214EC07B3E4EA46");
+            entity.HasKey(e => e.Id).HasName("PK__Account__3214EC07E17FC941");
 
             entity.ToTable("Account");
 
@@ -60,7 +56,7 @@ public partial class CarVipProContext : DbContext
 
         modelBuilder.Entity<CarCompany>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CarCompa__3214EC0755994AD6");
+            entity.HasKey(e => e.Id).HasName("PK__CarCompa__3214EC07F61BCC47");
 
             entity.ToTable("CarCompany");
 
@@ -71,7 +67,7 @@ public partial class CarVipProContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC07E5A48E7C");
+            entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC07FA233BF3");
 
             entity.ToTable("Customer");
 
@@ -87,7 +83,7 @@ public partial class CarVipProContext : DbContext
 
         modelBuilder.Entity<DriveSchedule>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__DriveSch__3214EC074678BE68");
+            entity.HasKey(e => e.Id).HasName("PK__DriveSch__3214EC071B8833B0");
 
             entity.ToTable("DriveSchedule");
 
@@ -113,7 +109,7 @@ public partial class CarVipProContext : DbContext
 
         modelBuilder.Entity<ElectricVehicle>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Electric__3214EC0742008D03");
+            entity.HasKey(e => e.Id).HasName("PK__Electric__3214EC076BD92E34");
 
             entity.ToTable("ElectricVehicle");
 
@@ -135,27 +131,9 @@ public partial class CarVipProContext : DbContext
                 .HasConstraintName("FK_EV_Category");
         });
 
-        modelBuilder.Entity<Feedback>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Feedback__3214EC075093B218");
-
-            entity.ToTable("Feedback");
-
-            entity.Property(e => e.DateTime)
-                .HasPrecision(0)
-                .HasDefaultValueSql("(sysutcdatetime())");
-            entity.Property(e => e.FeedbackType).HasMaxLength(20);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-            entity.HasOne(d => d.Customer).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Feedback_Customer");
-        });
-
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Order__3214EC07EA0C7913");
+            entity.HasKey(e => e.Id).HasName("PK__Order__3214EC078CCACFBF");
 
             entity.ToTable("Order");
 
@@ -175,15 +153,11 @@ public partial class CarVipProContext : DbContext
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Order_Customer");
-
-            entity.HasOne(d => d.Promotion).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.PromotionId)
-                .HasConstraintName("FK_Order_Promotion");
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__OrderDet__3214EC070D3328AE");
+            entity.HasKey(e => e.Id).HasName("PK__OrderDet__3214EC0730D19254");
 
             entity.ToTable("OrderDetail");
 
@@ -199,23 +173,9 @@ public partial class CarVipProContext : DbContext
                 .HasConstraintName("FK_OrderDetail_Order");
         });
 
-        modelBuilder.Entity<Promotion>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Promotio__3214EC07B11B192B");
-
-            entity.ToTable("Promotion");
-
-            entity.HasIndex(e => e.Code, "UQ_Promotion_Code").IsUnique();
-
-            entity.Property(e => e.Code).HasMaxLength(40);
-            entity.Property(e => e.Description).HasMaxLength(300);
-            entity.Property(e => e.Discount).HasColumnType("decimal(5, 2)");
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-        });
-
         modelBuilder.Entity<VehicleCategory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleC__3214EC07DB3ADFF5");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleC__3214EC07AE4A18FF");
 
             entity.ToTable("VehicleCategory");
 

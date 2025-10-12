@@ -11,8 +11,6 @@ public partial class Order
 
     public int AccountId { get; set; }
 
-    public int? PromotionId { get; set; }
-
     public DateTime DateTime { get; set; }
 
     public decimal Total { get; set; }
@@ -26,6 +24,4 @@ public partial class Order
     public virtual Customer Customer { get; set; } = null!;
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
-
-    public virtual Promotion? Promotion { get; set; }
 }

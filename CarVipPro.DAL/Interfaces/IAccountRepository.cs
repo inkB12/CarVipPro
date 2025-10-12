@@ -1,7 +1,6 @@
 ﻿using CarVipPro.DAL.Entities;
 using System.Linq.Expressions;
 
-
 namespace CarVipPro.DAL.Interfaces
 {
     public interface IAccountRepository
@@ -11,7 +10,7 @@ namespace CarVipPro.DAL.Interfaces
         Task<List<Account>> GetAllAsync(Expression<Func<Account, bool>>? predicate = null);
 
         Task<Account> CreateAsync(Account account);
-        Task<Account> UpdateAsync(Account account);        
+        Task<Account> UpdateAsync(Account account);
         Task<bool> DeleteAsync(int id);
         Task<bool> DeactivateAsync(int id);
         Task<int> SaveChangesAsync();
