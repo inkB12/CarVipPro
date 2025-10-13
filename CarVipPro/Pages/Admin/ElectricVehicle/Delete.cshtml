@@ -1,0 +1,16 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.DeleteModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Xóa xe điện";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4 text-danger"><i class="bi bi-trash"></i> Xóa Xe Điện</h3>
+    <p>Bạn có chắc muốn xóa xe này không?</p>
+    <form method="post">
+        <input type="hidden" asp-for="Vehicle.Id" />
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+        <a asp-page="Index" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Hủy</a>
+    </form>
+</div>

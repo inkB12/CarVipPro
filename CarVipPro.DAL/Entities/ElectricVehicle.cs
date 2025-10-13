@@ -5,6 +5,10 @@ namespace CarVipPro.DAL.Entities;
 
 public partial class ElectricVehicle
 {
+    //public string RangePerCharge;
+    //public string BatteryCapacity;
+    public string VehicleCategory ;
+
     public int Id { get; set; }
 
     public int CarCompanyId { get; set; }

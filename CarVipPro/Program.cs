@@ -22,7 +22,20 @@ namespace CarVipPro
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
 
+            builder.Services.AddScoped<ICarCompanyRepository, CarCompanyRepository>();
+            builder.Services.AddScoped<ICarCompanyService, CarCompanyService>();
 
+            builder.Services.AddScoped<IVehicleCategoryRepository, VehicleCategoryRepository>();
+            builder.Services.AddScoped<IVehicleCategoryService, VehicleCategoryService>();
+
+            builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
+            builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
+
+            builder.Services.AddRazorPages()
+    .AddViewOptions(options =>
+    {
+        options.HtmlHelperOptions.ClientValidationEnabled = true;
+    });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(o =>
             {

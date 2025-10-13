@@ -1,0 +1,94 @@
+﻿@page "{id:int}"
+@model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.EditModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chỉnh sửa Xe Điện";
+}
+
+<div class="container-fluid text-light">
+    <h3 class="fw-bold mb-4"><i class="bi bi-pencil"></i> Cập nhật Xe Điện</h3>
+
+    <form method="post" class="animate__animated animate__fadeIn">
+        <input type="hidden" asp-for="Vehicle.Id" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Hãng xe</label>
+                <select asp-for="Vehicle.CarCompanyId" asp-items="Model.CarCompanies"
+                        class="form-select bg-dark text-light border-0">
+                    <option value="">-- Chọn hãng xe --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Loại xe</label>
+                <select asp-for="Vehicle.CategoryId" asp-items="Model.Categories"
+                        class="form-select bg-dark text-light border-0">
+                    <option value="">-- Chọn loại xe --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Model</label>
+                <input asp-for="Vehicle.Model" class="form-control bg-dark text-light border-0" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Phiên bản</label>
+                <input asp-for="Vehicle.Version" class="form-control bg-dark text-light border-0" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Giá (₫)</label>
+                <input asp-for="Vehicle.Price" type="number" class="form-control bg-dark text-light border-0" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Màu sắc</label>
+                <input asp-for="Vehicle.Color" class="form-control bg-dark text-light border-0" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Thông số kỹ thuật</label>
+            <textarea asp-for="Vehicle.Specification" rows="3"
+                      class="form-control bg-dark text-light border-0"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hình ảnh (URL)</label>
+            <input asp-for="Vehicle.ImageUrl" class="form-control bg-dark text-light border-0" id="imageUrlInput" />
+            <div class="mt-3">
+                <img id="previewImg" src="@Model.Vehicle.ImageUrl"
+                     class="border rounded @(string.IsNullOrEmpty(Model.Vehicle.ImageUrl) ? "d-none" : "")"
+                     style="max-width:200px; max-height:120px; object-fit:cover;" />
+            </div>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="Vehicle.IsActive" class="form-check-input" />
+            <label class="form-check-label">Đang bán</label>
+        </div>
+
+        <button type="submit" class="btn btn-gradient px-4"><i class="bi bi-save"></i> Lưu thay đổi</button>
+        <a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Preview ảnh khi người dùng thay đổi URL
+        document.getElementById("imageUrlInput").addEventListener("input", function () {
+            const url = this.value;
+            const preview = document.getElementById("previewImg");
+            if (url && url.startsWith("http")) {
+                preview.src = url;
+                preview.classList.remove("d-none");
+            } else {
+                preview.classList.add("d-none");
+            }
+        });
+    </script>
+}

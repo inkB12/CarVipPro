@@ -1,0 +1,31 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.CarCompany.EditModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chỉnh sửa hãng xe";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4"><i class="bi bi-pencil-square"></i> Cập nhật Hãng Xe</h3>
+    <form method="post">
+        <input type="hidden" asp-for="Company.Id" />
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tên hãng xe</label>
+            <input asp-for="Company.CatalogName" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Mô tả</label>
+            <textarea asp-for="Company.Description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-check mb-3">
+            <input asp-for="Company.IsActive" class="form-check-input" />
+            <label class="form-check-label">Đang hoạt động</label>
+        </div>
+
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu thay đổi</button>
+        <a asp-page="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+     
+
+
+    </form>
+</div>

@@ -5,6 +5,10 @@ namespace CarVipPro.DAL.Entities;
 
 public partial class CarCompany
 {
+    //public string Address;
+    //public string ContactNumber;
+    //public string Website;
+
     public int Id { get; set; }
 
     public string CatalogName { get; set; } = null!;
