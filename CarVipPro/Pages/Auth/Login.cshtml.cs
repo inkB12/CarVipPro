@@ -1,4 +1,5 @@
 ﻿using CarVipPro.APrenstationLayer.Infrastructure;
+using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,9 +27,10 @@ namespace CarVipPro.APrenstationLayer.Pages.Auth
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) return Page();
-
-            var (ok, msg, acc) = await _svc.LoginAsync(Input.Email, Input.Password);
-            if (!ok || acc == null)
+             
+            var acc = await _svc.LoginAsync(Input.Email, Input.Password);
+            string msg = "";
+            if (acc == null)
             {
                 Error = msg ?? "Đăng nhập thất bại.";
                 return Page();
@@ -36,9 +38,15 @@ namespace CarVipPro.APrenstationLayer.Pages.Auth
 
             HttpContext.Session.SignIn(acc.Id, acc.Email, acc.FullName ?? acc.Email, acc.Role ?? "Staff");
 
-            if (!string.IsNullOrWhiteSpace(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
-                return LocalRedirect(ReturnUrl);
+            //Điều hướng theo role
+            var role = acc.Role ?? "Staff";
+            if (string.Equals(role, "Staff", StringComparison.OrdinalIgnoreCase))
+                return RedirectToPage("/Staff/Index");
 
+            if (string.Equals(role, "Manager", StringComparison.OrdinalIgnoreCase))
+                return RedirectToPage("/Admin/Index");
+
+            //fallback
             return RedirectToPage("/Index");
         }
     }

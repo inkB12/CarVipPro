@@ -1,3 +1,4 @@
+using CarVipPro.APrenstationLayer.Hubs;
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.BLL.Services;
 using CarVipPro.DAL;
@@ -31,11 +32,16 @@ namespace CarVipPro
             builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
             builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
 
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
             builder.Services.AddRazorPages()
-    .AddViewOptions(options =>
-    {
-        options.HtmlHelperOptions.ClientValidationEnabled = true;
-    });
+            .AddViewOptions(options =>
+            {
+                options.HtmlHelperOptions.ClientValidationEnabled = true;
+            });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(o =>
             {
@@ -48,6 +54,9 @@ namespace CarVipPro
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+
+            // SignalR
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -65,6 +74,9 @@ namespace CarVipPro
             app.UseRouting();
 
             app.UseSession();
+
+            // Map hub
+            app.MapHub<CartHub>("/hubs/cart");
 
             app.UseAuthorization();
 

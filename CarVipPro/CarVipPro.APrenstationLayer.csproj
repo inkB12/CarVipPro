@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Hubs\" />
-    <Folder Include="Pages\Staff\" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.9" />
   </ItemGroup>
 
 </Project>

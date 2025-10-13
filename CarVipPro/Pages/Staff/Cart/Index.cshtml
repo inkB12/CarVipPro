@@ -1,0 +1,110 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.Cart.IndexModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+<h2 class="mb-3">Giỏ hàng</h2>
+
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+@if (!string.IsNullOrEmpty(Model.Info))
+{
+    <div class="alert alert-success">@Model.Info</div>
+}
+
+@if (Model.Cart.Items.Count == 0)
+{
+    <div class="alert alert-info">Giỏ hàng đang trống.</div>
+    <a class="btn btn-outline-primary" asp-page="/Staff/Vehicles/Index">Tiếp tục chọn xe</a>
+}
+else
+{
+    <form method="post">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Xe</th>
+                    <th>Đơn giá</th>
+                    <th style="width:160px">Số lượng</th>
+                    <th>Tạm tính</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Cart.Items.Count; i++)
+                {
+                    var it = Model.Cart.Items[i];
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(it.ImageUrl))
+                                {
+                                    <img src="@it.ImageUrl" alt="" style="width:60px;height:40px;object-fit:cover" class="me-2" onerror="this.style.display='none'" />
+                                }
+                                <div>
+                                    <div class="fw-semibold">@it.Name</div>
+                                    @if (!string.IsNullOrWhiteSpace(it.Color))
+                                    {
+                                        <div class="text-muted small">Màu: @it.Color</div>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>@it.UnitPrice.ToString("n0")</td>
+                        <td>
+                            <input type="hidden" name="Items[@i].ElectricVehicleId" value="@it.ElectricVehicleId" />
+                            <input class="form-control" type="number" name="Items[@i].Quantity" value="@it.Quantity" min="1" />
+                        </td>
+                        <td class="fw-bold">@it.LineTotal.ToString("n0")</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-danger"
+                                    type="submit"
+                                    formaction="?handler=Remove"
+                                    formmethod="post"
+                                    name="id"
+                                    value="@it.ElectricVehicleId">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-semibold">Tổng:</td>
+                    <td class="fw-bold">@Model.Cart.Total.ToString("n0")</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" formaction="?handler=Update" formmethod="post">Cập nhật số lượng</button>
+            <a class="btn btn-outline-primary" asp-page="/Staff/Vehicles/Index">Tiếp tục chọn</a>
+        </div>
+
+        <hr />
+
+        <h5>Thanh toán</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Customer ID</label>
+                <input class="form-control" name="CustomerId" value="@Model.CustomerId" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Payment</label>
+                <select class="form-select" name="PaymentMethod">
+                    <option value="CASH" selected="@(Model.PaymentMethod == "CASH")">CASH</option>
+                    <option value="MOMO" selected="@(Model.PaymentMethod == "MOMO")">MOMO</option>
+                    <option value="INSTALLMENT" selected="@(Model.PaymentMethod == "INSTALLMENT")">INSTALLMENT</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button class="btn btn-success" formaction="?handler=Checkout" formmethod="post">Thanh toán</button>
+        </div>
+    </form>
+}
