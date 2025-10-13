@@ -5,6 +5,8 @@ namespace CarVipPro.DAL.Entities;
 
 public partial class VehicleCategory
 {
+    //public string Description;
+
     public int Id { get; set; }
 
     public string CategoryName { get; set; } = null!;

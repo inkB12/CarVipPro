@@ -1,0 +1,46 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.CreateModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Thêm xe điện";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4"><i class="bi bi-lightning"></i> Thêm Xe Điện Mới</h3>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Model</label>
+                <input asp-for="Vehicle.Model" class="form-control" />
+                <span asp-validation-for="Vehicle.Model" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Giá (VND)</label>
+                <input asp-for="Vehicle.Price" class="form-control" type="number" />
+                <span asp-validation-for="Vehicle.Price" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Hãng xe</label>
+            <select asp-for="Vehicle.CarCompanyId" class="form-select" asp-items="Model.CarCompanies"></select>
+            <span asp-validation-for="Vehicle.CarCompanyId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Loại xe</label>
+            <select asp-for="Vehicle.CategoryId" class="form-select" asp-items="Model.Categories"></select>
+            <span asp-validation-for="Vehicle.CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Màu sắc</label>
+            <input asp-for="Vehicle.Color" class="form-control" />
+            <span asp-validation-for="Vehicle.Color" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu</button>
+    </form>
+</div>

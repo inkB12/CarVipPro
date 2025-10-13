@@ -1,0 +1,52 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.EditModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chỉnh sửa xe điện";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4"><i class="bi bi-pencil"></i> Cập nhật Xe Điện</h3>
+    <form method="post">
+        <input type="hidden" asp-for="Vehicle.Id" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Model</label>
+                <input asp-for="Vehicle.Model" class="form-control" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Giá (VND)</label>
+                <input asp-for="Vehicle.Price" class="form-control" type="number" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Phiên bản</label>
+            <input asp-for="Vehicle.Version" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Hãng xe</label>
+            <select asp-for="Vehicle.CarCompanyId" class="form-select" asp-items="Model.CarCompanies"></select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Loại xe</label>
+            <select asp-for="Vehicle.CategoryId" class="form-select" asp-items="Model.Categories"></select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Màu sắc</label>
+            <input asp-for="Vehicle.Color" class="form-control" />
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="Vehicle.IsActive" class="form-check-input" />
+            <label class="form-check-label">Đang bán</label>
+        </div>
+
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Cập nhật</button>
+        <a asp-page="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+    </form>
+</div>

@@ -1,0 +1,16 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.VehicleCategory.DeleteModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Xóa loại xe";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4 text-danger"><i class="bi bi-trash"></i> Xóa Loại Xe</h3>
+    <p>Bạn có chắc muốn xóa loại xe này không?</p>
+    <form method="post">
+        <input type="hidden" asp-for="Category.Id" />
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+        <a asp-page="Index" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Hủy</a>
+    </form>
+</div>

@@ -1,0 +1,144 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.IndexModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Bảng điều khiển quản trị";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<div class="container-fluid px-3 animate__animated animate__fadeIn">
+    <h3 class="fw-bold mb-4 text-primary">👋 Chào mừng trở lại, Admin!</h3>
+
+    <!-- Spinner khi load -->
+    <div id="loadingSpinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+    </div>
+
+    <div id="dashboardContent" style="display:none;">
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg animate__animated animate__zoomIn" style="animation-delay:0.1s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-building text-primary fs-2"></i>
+                        <h2 class="fw-bold mt-2">@Model.TotalCompanies</h2>
+                        <p class="text-muted mb-0">Hãng Xe</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg animate__animated animate__zoomIn" style="animation-delay:0.2s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-lightning-charge text-warning fs-2"></i>
+                        <h2 class="fw-bold mt-2">@Model.TotalVehicles</h2>
+                        <p class="text-muted mb-0">Xe Điện</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg animate__animated animate__zoomIn" style="animation-delay:0.3s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tags text-success fs-2"></i>
+                        <h2 class="fw-bold mt-2">@Model.TotalCategories</h2>
+                        <p class="text-muted mb-0">Loại Xe</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-lg animate__animated animate__zoomIn" id="barChartCard">
+                    <div class="card-body">
+                        <h6 class="fw-bold"><i class="bi bi-bar-chart-line"></i> Thống kê tổng quan</h6>
+                        <canvas id="adminChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg animate__animated animate__zoomIn" id="pieChartCard">
+                    <div class="card-body">
+                        <h6 class="fw-bold"><i class="bi bi-pie-chart"></i> Tỉ lệ Xe / Hãng</h6>
+                        <canvas id="pieChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Khi load trang xong, ẩn spinner và hiện dashboard
+        window.addEventListener("load", function () {
+            document.getElementById("loadingSpinner").style.display = "none";
+            document.getElementById("dashboardContent").style.display = "block";
+        });
+
+        // Hàm tạo animation zoom-in cho chart khi hiển thị
+        function animateChart(chartElement, callback) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        chartElement.classList.add("animate__animated", "animate__zoomIn");
+                        if (callback) callback();
+                        observer.disconnect();
+                    }
+                });
+            });
+            observer.observe(chartElement);
+        }
+
+        // Cấu hình Chart
+        const barCtx = document.getElementById('adminChart');
+        const pieCtx = document.getElementById('pieChart');
+
+        animateChart(barCtx, () => {
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hãng xe', 'Xe điện', 'Loại xe'],
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: [@Model.TotalCompanies, @Model.TotalVehicles, @Model.TotalCategories],
+                        backgroundColor: ['#6366f1', '#facc15', '#22c55e'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutElastic'
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+
+        animateChart(pieCtx, () => {
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Xe Điện', 'Hãng Xe', 'Loại Xe'],
+                    datasets: [{
+                        data: [@Model.TotalVehicles, @Model.TotalCompanies, @Model.TotalCategories],
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#14b8a6']
+                    }]
+                },
+                options: {
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1500
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        });
+    </script>
+}

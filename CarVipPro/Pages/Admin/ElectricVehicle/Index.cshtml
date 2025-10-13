@@ -1,0 +1,76 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.IndexModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý xe điện";
+}
+
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="bi bi-lightning-charge"></i> Danh sách Xe điện</h2>
+        <a asp-page="Create" class="btn btn-gradient btn-primary shadow-sm px-4 py-2">
+            <i class="bi bi-plus-circle me-2"></i> Thêm xe mới
+        </a>
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body">
+            <table class="table table-hover align-middle text-center">
+                <thead class="bg-gradient bg-primary text-white rounded-top">
+                    <tr>
+                        <th>Model</th>
+                        <th>Phiên bản</th>
+                        <th>Giá (₫)</th>
+                        <th>Hãng xe</th>
+                        <th>Loại xe</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Vehicles == null || !Model.Vehicles.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-muted py-4">
+                                <i class="bi bi-exclamation-circle"></i> Chưa có xe điện nào được thêm.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var v in Model.Vehicles)
+                        {
+                            <tr class="animate__animated animate__fadeInUp">
+                                <td class="fw-semibold">@v.Model</td>
+                                <td>@v.Version</td>
+                                <td>@v.Price.ToString("N0")</td>
+                                <td>@v.CarCompanyName</td>
+                                <td>@v.CategoryName</td>
+                                <td>
+                                    @if (v.IsActive)
+                                    {
+                                        <span class="badge bg-success bg-gradient px-3 py-2">Đang bán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary bg-gradient px-3 py-2">Ngừng</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-page="Update" asp-route-id="@v.Id" class="btn btn-sm btn-warning text-white shadow-sm">
+                                            <i class="bi bi-pencil-square"></i> Sửa
+                                        </a>
+                                        <a asp-page="Delete" asp-route-id="@v.Id" class="btn btn-sm btn-danger shadow-sm ms-1">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
