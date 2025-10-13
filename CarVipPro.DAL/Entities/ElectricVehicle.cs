@@ -7,7 +7,7 @@ public partial class ElectricVehicle
 {
     //public string RangePerCharge;
     //public string BatteryCapacity;
-    //public string VehicleCategory;
+    public string VehicleCategory ;
 
     public int Id { get; set; }
 

@@ -2,45 +2,101 @@
 @model CarVipPro.APrenstationLayer.Pages.Admin.ElectricVehicle.CreateModel
 @{
     Layout = "_LayoutAdmin";
-    ViewData["Title"] = "Thêm xe điện";
+    ViewData["Title"] = "Thêm Xe Điện Mới";
 }
 
-<div class="container mt-4">
-    <h3 class="mb-4"><i class="bi bi-lightning"></i> Thêm Xe Điện Mới</h3>
-    <form method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="container-fluid text-light">
+    <h3 class="fw-bold mb-4"><i class="bi bi-lightning"></i> Thêm Xe Điện Mới</h3>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form method="post" class="animate__animated animate__fadeIn">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Hãng xe</label>
+                <select asp-for="Vehicle.CarCompanyId" asp-items="Model.CarCompanies"
+                        class="form-select bg-dark text-light border-0">
+                    <option value="">-- Chọn hãng xe --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Loại xe</label>
+                <select asp-for="Vehicle.CategoryId" asp-items="Model.Categories"
+                        class="form-select bg-dark text-light border-0">
+                    <option value="">-- Chọn loại xe --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Các trường khác -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Model</label>
+                <input asp-for="Vehicle.Model" class="form-control bg-dark text-light border-0" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Phiên bản</label>
+                <input asp-for="Vehicle.Version" class="form-control bg-dark text-light border-0" />
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Model</label>
-                <input asp-for="Vehicle.Model" class="form-control" />
-                <span asp-validation-for="Vehicle.Model" class="text-danger"></span>
+                <label class="form-label">Giá (₫)</label>
+                <input asp-for="Vehicle.Price" class="form-control bg-dark text-light border-0" type="number" />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Giá (VND)</label>
-                <input asp-for="Vehicle.Price" class="form-control" type="number" />
-                <span asp-validation-for="Vehicle.Price" class="text-danger"></span>
+                <label class="form-label">Màu sắc</label>
+                <input asp-for="Vehicle.Color" class="form-control bg-dark text-light border-0" />
             </div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Hãng xe</label>
-            <select asp-for="Vehicle.CarCompanyId" class="form-select" asp-items="Model.CarCompanies"></select>
-            <span asp-validation-for="Vehicle.CarCompanyId" class="text-danger"></span>
+            <label class="form-label">Thông số kỹ thuật</label>
+            <textarea asp-for="Vehicle.Specification" rows="3"
+                      class="form-control bg-dark text-light border-0"></textarea>
         </div>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Loại xe</label>
-            <select asp-for="Vehicle.CategoryId" class="form-select" asp-items="Model.Categories"></select>
-            <span asp-validation-for="Vehicle.CategoryId" class="text-danger"></span>
+            <label class="form-label">Hình ảnh (URL)</label>
+            <input asp-for="Vehicle.ImageUrl" class="form-control bg-dark text-light border-0"
+                   id="imageUrlInput" />
+            <div class="mt-3">
+                <img id="previewImg" src="" class="d-none border rounded"
+                     style="max-width:200px; max-height:120px; object-fit:cover;" />
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Màu sắc</label>
-            <input asp-for="Vehicle.Color" class="form-control" />
-            <span asp-validation-for="Vehicle.Color" class="text-danger"></span>
+        <div class="form-check mb-3">
+            <input asp-for="Vehicle.IsActive" class="form-check-input" />
+            <label class="form-check-label">Đang bán</label>
         </div>
 
-        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu</button>
+        <button type="submit" class="btn btn-gradient px-4"><i class="bi bi-save"></i> Lưu</button>
+        <a asp-page="Index" class="btn btn-secondary ms-2">Quay lại</a>
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        // Preview ảnh khi nhập URL
+        document.getElementById("imageUrlInput").addEventListener("input", function () {
+            const url = this.value;
+            const preview = document.getElementById("previewImg");
+            if (url && url.startsWith("http")) {
+                preview.src = url;
+                preview.classList.remove("d-none");
+            } else {
+                preview.classList.add("d-none");
+            }
+        });
+    </script>
+}

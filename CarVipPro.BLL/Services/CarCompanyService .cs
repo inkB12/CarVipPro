@@ -1,96 +1,85 @@
 ﻿using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
-using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarVipPro.BLL.Services
 {
     public class CarCompanyService : ICarCompanyService
     {
-        private readonly ICarCompanyRepository _repo;
+        private readonly ICarCompanyRepository _companyRepo;
+        private readonly IElectricVehicleRepository _vehicleRepo;
 
-        public CarCompanyService(ICarCompanyRepository repo)
+        public CarCompanyService(ICarCompanyRepository companyRepo, IElectricVehicleRepository vehicleRepo)
         {
-            _repo = repo;
+            _companyRepo = companyRepo;
+            _vehicleRepo = vehicleRepo;
         }
 
-        /// <summary>
-        /// Lấy danh sách tất cả hãng xe và ánh xạ sang DTO
-        /// </summary>
         public async Task<IEnumerable<CarCompanyDTO>> GetAll()
         {
-            var companies = await _repo.GetAllAsync();
+            var companies = await _companyRepo.GetAllAsync();
+            var vehicles = await _vehicleRepo.GetAllAsync();
 
+            // Gộp dữ liệu và tính số lượng xe điện cho từng hãng
             return companies.Select(c => new CarCompanyDTO
             {
                 Id = c.Id,
                 CatalogName = c.CatalogName,
                 Description = c.Description,
                 IsActive = c.IsActive,
-                ElectricVehicleCount = c.ElectricVehicles?.Count ?? 0
-            });
+                ElectricVehicleCount = vehicles.Count(v => v.CarCompanyId == c.Id)
+            }).ToList();
         }
 
-        /// <summary>
-        /// Lấy thông tin chi tiết hãng xe theo ID
-        /// </summary>
-        public async Task<CarCompanyDTO> GetById(int id)
+        public async Task<CarCompanyDTO?> GetById(int id)
         {
-            var c = await _repo.GetByIdAsync(id);
-            if (c == null) return null;
+            var company = await _companyRepo.GetByIdAsync(id);
+            if (company == null) return null;
+
+            var vehicles = await _vehicleRepo.GetAllAsync();
 
             return new CarCompanyDTO
             {
-                Id = c.Id,
-                CatalogName = c.CatalogName,
-                Description = c.Description,
-                IsActive = c.IsActive,
-                ElectricVehicleCount = c.ElectricVehicles?.Count ?? 0
+                Id = company.Id,
+                CatalogName = company.CatalogName,
+                Description = company.Description,
+                IsActive = company.IsActive,
+                ElectricVehicleCount = vehicles.Count(v => v.CarCompanyId == company.Id)
             };
         }
 
-        /// <summary>
-        /// Thêm mới hãng xe (DTO → Entity)
-        /// </summary>
-        public async Task Add(CarCompanyDTO companyDto)
+        public async Task Add(CarCompanyDTO dto)
         {
-            var entity = new CarCompany
+            var exists = await _companyRepo.ExistsByNameAsync(dto.CatalogName);
+            if (exists)
+                throw new Exception("Tên hãng xe đã tồn tại.");
+            var entity = new CarVipPro.DAL.Entities.CarCompany
             {
-                CatalogName = companyDto.CatalogName,
-                Description = companyDto.Description,
-                IsActive = companyDto.IsActive
+                CatalogName = dto.CatalogName,
+                Description = dto.Description,
+                IsActive = dto.IsActive
             };
 
-            await _repo.AddAsync(entity);
+            await _companyRepo.AddAsync(entity);
         }
 
-        /// <summary>
-        /// Cập nhật hãng xe (DTO → Entity)
-        /// </summary>
-        public async Task Update(CarCompanyDTO companyDto)
+        public async Task Update(CarCompanyDTO dto)
         {
-            var entity = new CarCompany
-            {
-                Id = companyDto.Id,
-                CatalogName = companyDto.CatalogName,
-                Description = companyDto.Description,
-                IsActive = companyDto.IsActive
-            };
+            var entity = await _companyRepo.GetByIdAsync(dto.Id);
+            if (entity == null) return;
 
-            await _repo.UpdateAsync(entity);
+            entity.CatalogName = dto.CatalogName;
+            entity.Description = dto.Description;
+            entity.IsActive = dto.IsActive;
+
+            await _companyRepo.UpdateAsync(entity);
         }
 
-        /// <summary>
-        /// Xóa hãng xe theo ID
-        /// </summary>
         public async Task Delete(int id)
         {
-            await _repo.DeleteAsync(id);
+            await _companyRepo.DeleteAsync(id);
         }
+
     }
 }

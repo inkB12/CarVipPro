@@ -1,77 +1,82 @@
 ﻿using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
-using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarVipPro.BLL.Services
 {
     public class VehicleCategoryService : IVehicleCategoryService
     {
-        private readonly IVehicleCategoryRepository _repo;
+        private readonly IVehicleCategoryRepository _categoryRepo;
+        private readonly IElectricVehicleRepository _vehicleRepo;
 
-        public VehicleCategoryService(IVehicleCategoryRepository repo)
+        public VehicleCategoryService(IVehicleCategoryRepository categoryRepo, IElectricVehicleRepository vehicleRepo)
         {
-            _repo = repo;
+            _categoryRepo = categoryRepo;
+            _vehicleRepo = vehicleRepo;
         }
 
         public async Task<IEnumerable<VehicleCategoryDTO>> GetAll()
         {
-            var categories = await _repo.GetAllAsync();
+            var categories = await _categoryRepo.GetAllAsync();
+            var vehicles = await _vehicleRepo.GetAllAsync();
 
+            // Gộp dữ liệu và tính số lượng xe điện cho từng loại
             return categories.Select(c => new VehicleCategoryDTO
             {
                 Id = c.Id,
                 CategoryName = c.CategoryName,
                 IsActive = c.IsActive,
-                ElectricVehicleCount = c.ElectricVehicles?.Count ?? 0
-            });
+                ElectricVehicleCount = vehicles.Count(v => v.CategoryId == c.Id)
+            }).ToList();
         }
 
-        public async Task<VehicleCategoryDTO> GetById(int id)
+        public async Task<VehicleCategoryDTO?> GetById(int id)
         {
-            var c = await _repo.GetByIdAsync(id);
-            if (c == null) return null;
+            var category = await _categoryRepo.GetByIdAsync(id);
+            if (category == null) return null;
+
+            var vehicles = await _vehicleRepo.GetAllAsync();
 
             return new VehicleCategoryDTO
             {
-                Id = c.Id,
-                CategoryName = c.CategoryName,
-                IsActive = c.IsActive,
-                ElectricVehicleCount = c.ElectricVehicles?.Count ?? 0
+                Id = category.Id,
+                CategoryName = category.CategoryName,
+                IsActive = category.IsActive,
+                ElectricVehicleCount = vehicles.Count(v => v.CategoryId == category.Id)
             };
         }
 
-        public async Task Add(VehicleCategoryDTO categoryDto)
+        public async Task Add(VehicleCategoryDTO dto)
         {
-            var category = new VehicleCategory
+            var exists = await _categoryRepo.ExistsByNameAsync(dto.CategoryName);
+            if (exists)
+                throw new Exception("Tên loại xe đã tồn tại.");
+            var entity = new CarVipPro.DAL.Entities.VehicleCategory
             {
-                CategoryName = categoryDto.CategoryName,
-                IsActive = categoryDto.IsActive
+                CategoryName = dto.CategoryName,
+                IsActive = dto.IsActive
             };
 
-            await _repo.AddAsync(category);
+            await _categoryRepo.AddAsync(entity);
         }
 
-        public async Task Update(VehicleCategoryDTO categoryDto)
+        public async Task Update(VehicleCategoryDTO dto)
         {
-            var category = new VehicleCategory
-            {
-                Id = categoryDto.Id,
-                CategoryName = categoryDto.CategoryName,
-                IsActive = categoryDto.IsActive
-            };
+            var exists = await _categoryRepo.ExistsByNameAsync(dto.CategoryName);
+            var current = await _categoryRepo.GetByIdAsync(dto.Id);
 
-            await _repo.UpdateAsync(category);
+            if (exists && current.CategoryName.ToLower() != dto.CategoryName.ToLower())
+                throw new Exception("Tên loại xe đã tồn tại.");
+
+            current.CategoryName = dto.CategoryName;
+            current.IsActive = dto.IsActive;
+
+            await _categoryRepo.UpdateAsync(current);
         }
-
         public async Task Delete(int id)
         {
-            await _repo.DeleteAsync(id);
+            await _categoryRepo.DeleteAsync(id);
         }
     }
 }

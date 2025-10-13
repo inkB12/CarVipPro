@@ -6,21 +6,28 @@
 }
 
 <div class="container-fluid animate__animated animate__fadeIn">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary"><i class="bi bi-lightning-charge"></i> Danh sách Xe điện</h2>
-        <a asp-page="Create" class="btn btn-gradient btn-primary shadow-sm px-4 py-2">
+        <h2 class="fw-bold text-light">
+            <i class="bi bi-lightning-charge text-warning"></i> Danh sách Xe Điện
+        </h2>
+        <a asp-page="Create" class="btn btn-gradient px-4 py-2 shadow-sm">
             <i class="bi bi-plus-circle me-2"></i> Thêm xe mới
         </a>
     </div>
 
-    <div class="card shadow-lg border-0 rounded-4">
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4" style="background-color:#1e293b;">
         <div class="card-body">
-            <table class="table table-hover align-middle text-center">
-                <thead class="bg-gradient bg-primary text-white rounded-top">
+            <table class="table table-dark table-hover align-middle text-center mb-0">
+                <thead style="background-color:#1e3a8a;">
                     <tr>
+                        <th>Ảnh</th>
                         <th>Model</th>
                         <th>Phiên bản</th>
                         <th>Giá (₫)</th>
+                        <th>Thông số kỹ thuật</th>
+                        <th>Màu</th>
                         <th>Hãng xe</th>
                         <th>Loại xe</th>
                         <th>Trạng thái</th>
@@ -31,7 +38,7 @@
                     @if (Model.Vehicles == null || !Model.Vehicles.Any())
                     {
                         <tr>
-                            <td colspan="7" class="text-muted py-4">
+                            <td colspan="10" class="text-muted py-4">
                                 <i class="bi bi-exclamation-circle"></i> Chưa có xe điện nào được thêm.
                             </td>
                         </tr>
@@ -41,9 +48,29 @@
                         @foreach (var v in Model.Vehicles)
                         {
                             <tr class="animate__animated animate__fadeInUp">
-                                <td class="fw-semibold">@v.Model</td>
-                                <td>@v.Version</td>
-                                <td>@v.Price.ToString("N0")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(v.ImageUrl))
+                                    {
+                                        <img src="@v.ImageUrl" alt="@v.Model"
+                                             class="img-thumbnail border-0 shadow-sm"
+                                             style="width:70px; height:50px; object-fit:cover; border-radius:6px;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Không có ảnh</span>
+                                    }
+                                </td>
+
+                                <td class="fw-semibold text-light">@v.Model</td>
+                                <td class="text-secondary">@v.Version</td>
+                                <td class="text-info fw-semibold">@v.Price.ToString("N0")</td>
+                                <td class="text-truncate" style="max-width:200px;" title="@v.Specification">
+                                    @(string.IsNullOrWhiteSpace(v.Specification) ? "-" : v.Specification)
+                                </td>
+                                <td>
+                                    <span class="badge bg-gradient px-3 py-2"
+                                          style="background-color:@GetColorBadge(v.Color);">@v.Color</span>
+                                </td>
                                 <td>@v.CarCompanyName</td>
                                 <td>@v.CategoryName</td>
                                 <td>
@@ -56,15 +83,15 @@
                                         <span class="badge bg-secondary bg-gradient px-3 py-2">Ngừng</span>
                                     }
                                 </td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a asp-page="Update" asp-route-id="@v.Id" class="btn btn-sm btn-warning text-white shadow-sm">
-                                            <i class="bi bi-pencil-square"></i> Sửa
-                                        </a>
-                                        <a asp-page="Delete" asp-route-id="@v.Id" class="btn btn-sm btn-danger shadow-sm ms-1">
-                                            <i class="bi bi-trash"></i> Xóa
-                                        </a>
-                                    </div>
+                                <td>
+                                    <a asp-page="Update" asp-route-id="@v.Id"
+                                       class="btn btn-sm btn-warning text-white me-1 shadow-sm">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-page="Delete" asp-route-id="@v.Id"
+                                       class="btn btn-sm btn-danger shadow-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -74,3 +101,21 @@
         </div>
     </div>
 </div>
+@functions {
+    // 🎨 Xử lý màu badge dựa trên tên màu (tự động mapping)
+    private string GetColorBadge(string? color)
+    {
+        if (string.IsNullOrWhiteSpace(color)) return "#475569"; // xám
+        return color.ToLower() switch
+        {
+            "đen" => "#0f172a",
+            "trắng" => "#f8fafc",
+            "xám" => "#64748b",
+            "đỏ" => "#ef4444",
+            "xanh" => "#22d3ee",
+            "bạc" => "#d1d5db",
+            "kem" => "#fde68a",
+            _ => "#6366f1"
+        };
+    }
+}

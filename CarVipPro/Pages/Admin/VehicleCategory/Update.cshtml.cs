@@ -1,4 +1,4 @@
-using CarVipPro.BLL.Dtos;
+﻿using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,10 +26,20 @@ namespace CarVipPro.APrenstationLayer.Pages.Admin.VehicleCategory
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid) return Page();
+            if (!ModelState.IsValid)
+                return Page();
 
-            await _service.Update(Category);
-            return RedirectToPage("Index");
+            try
+            {
+                await _service.Update(Category);
+                TempData["SuccessMessage"] = "Cập nhật loại xe thành công!";
+                return RedirectToPage("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
+            }
         }
     }
 }

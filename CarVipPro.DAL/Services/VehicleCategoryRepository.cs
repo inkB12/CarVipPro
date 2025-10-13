@@ -38,6 +38,11 @@ namespace CarVipPro.DAL.Services
             }
 
         }
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.VehicleCategories
+                .AnyAsync(c => c.CategoryName.ToLower() == name.ToLower());
+        }
     }
     
 }

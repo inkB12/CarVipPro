@@ -1,10 +1,7 @@
 ﻿using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CarVipPro.DAL.Services
@@ -21,39 +18,44 @@ namespace CarVipPro.DAL.Services
         public async Task<IEnumerable<ElectricVehicle>> GetAllAsync()
         {
             return await _context.ElectricVehicles
-                .Include(ev => ev.CarCompany)
-                .Include(ev => ev.Category) // Corrected property name from VehicleCategory to Category  
+                .Include(v => v.CarCompany)       // 🟢 Join sang bảng Hãng xe
+                .Include(v => v.Category)         // 🟢 Join sang bảng Loại xe
                 .ToListAsync();
         }
 
-        public async Task<ElectricVehicle> GetByIdAsync(int id)
+        public async Task<ElectricVehicle?> GetByIdAsync(int id)
         {
             return await _context.ElectricVehicles
-                .Include(ev => ev.CarCompany)
-                .Include(ev => ev.Category) // Corrected property name from VehicleCategory to Category  
-                .FirstOrDefaultAsync(ev => ev.Id == id);
+                .Include(v => v.CarCompany)
+                .Include(v => v.Category)
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
 
-        public async Task AddAsync(ElectricVehicle vehicle)
+        public async Task AddAsync(ElectricVehicle entity)
         {
-            await _context.ElectricVehicles.AddAsync(vehicle);
+            _context.ElectricVehicles.Add(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(ElectricVehicle vehicle)
+        public async Task UpdateAsync(ElectricVehicle entity)
         {
-            _context.ElectricVehicles.Update(vehicle);
+            _context.ElectricVehicles.Update(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var entity = await _context.ElectricVehicles.FirstOrDefaultAsync(ev => ev.Id == id);
+            var entity = await _context.ElectricVehicles.FindAsync(id);
             if (entity != null)
             {
                 _context.ElectricVehicles.Remove(entity);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> ExistsByModelAsync(string model)
+        {
+            return await _context.ElectricVehicles.AnyAsync(v => v.Model == model);
         }
     }
 }

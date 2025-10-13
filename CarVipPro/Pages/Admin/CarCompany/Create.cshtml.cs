@@ -23,8 +23,17 @@ namespace CarVipPro.APrenstationLayer.Pages.Admin.CarCompany
         {
             if (!ModelState.IsValid) return Page();
 
-            await _service.Add(Company);
-            return RedirectToPage("Index");
+            try
+            {
+                await _service.Add(Company);
+                return RedirectToPage("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
+            }
         }
+
     }
 }

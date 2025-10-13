@@ -14,5 +14,6 @@ namespace CarVipPro.DAL.Interfaces
         Task AddAsync(ElectricVehicle vehicle);
         Task UpdateAsync(ElectricVehicle vehicle);
         Task DeleteAsync(int id);
+        Task<bool> ExistsByModelAsync(string model);
     }
 }

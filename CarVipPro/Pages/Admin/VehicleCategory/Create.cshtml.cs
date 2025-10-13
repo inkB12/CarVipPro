@@ -1,7 +1,8 @@
-using CarVipPro.BLL.Dtos;
+﻿using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CarVipPro.APrenstationLayer.Pages.Admin.VehicleCategory { 
     public class CreateModel : PageModel
@@ -20,10 +21,21 @@ namespace CarVipPro.APrenstationLayer.Pages.Admin.VehicleCategory {
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid) return Page();
+            if (!ModelState.IsValid)
+                return Page();
 
-            await _service.Add(Category);
-            return RedirectToPage("Index");
+            try
+            {
+                await _service.Add(Category);
+                TempData["SuccessMessage"] = "Thêm loại xe thành công!";
+                return RedirectToPage("Index");
+            }
+            catch (Exception ex)
+            {
+                // Nếu lỗi do trùng tên, hiển thị thông báo lỗi
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
+            }
         }
     }
 }

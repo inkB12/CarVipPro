@@ -14,6 +14,7 @@ namespace CarVipPro.DAL.Interfaces
         Task AddAsync(VehicleCategory category);
         Task UpdateAsync(VehicleCategory category);
         Task DeleteAsync(int id);
+        Task<bool> ExistsByNameAsync(string name);
     }
 
 }
