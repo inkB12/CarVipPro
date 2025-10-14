@@ -1,0 +1,22 @@
+﻿@model List<CarVipPro.BLL.Dtos.DriveScheduleViewDto>
+
+@if (Model == null || Model.Count == 0)
+{
+    <div class="p-2 text-muted fst-italic">Chưa có lịch lái thử nào trong ngày.</div>
+}
+else
+{
+    <div class="border rounded p-3 bg-light">
+        <h5 class="fw-semibold mb-2">📅 Lịch lái thử trong ngày</h5>
+        <ul class="list-group">
+            @foreach (var s in Model)
+            {
+                <li class="list-group-item">
+                    <b>@s.StartTime.ToString("HH:mm") - @s.EndTime.ToString("HH:mm")</b>
+                    &nbsp; | &nbsp; <span>@s.CustomerName</span>
+                    &nbsp; | &nbsp; <span class="badge bg-secondary">@s.Status</span>
+                </li>
+            }
+        </ul>
+    </div>
+}

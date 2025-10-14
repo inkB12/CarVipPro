@@ -10,8 +10,4 @@
     <ProjectReference Include="..\CarVipPro.DAL\CarVipPro.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dtos\" />
-  </ItemGroup>
-
 </Project>
