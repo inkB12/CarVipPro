@@ -154,32 +154,71 @@
             });
 
             // Cập nhật lại giao diện
-            function renderCart(data) {
-                const tbody = document.getElementById("cart-body");
-                tbody.innerHTML = "";
+            function renderCart(data){
+              const container = document.getElementById('cart-container');
+              if(!data.items || data.items.length===0){
+                container.innerHTML = `
+                  <div class="alert alert-info">Giỏ hàng đang trống.</div>
+                  <a class="btn btn-outline-primary" href="/Staff/Vehicles/Index">Tiếp tục chọn xe</a>`;
+                return;
+              }
+              const tbody   = document.getElementById('cart-body');
+              const totalEl = document.getElementById('cart-total');
+              const tpl     = document.getElementById('cart-row-tpl').content;
 
-                if (!data.items || data.items.length === 0) {
-                    document.getElementById("cart-container").innerHTML = `
-                        <div class="alert alert-info">Giỏ hàng đang trống.</div>
-                        <a class="btn btn-outline-primary" href="/Staff/Vehicles/Index">Tiếp tục chọn xe</a>
-                    `;
-                    return;
-                }
+              tbody.innerHTML = '';
+              data.items.forEach(it=>{
+                const id        = it.id ?? it.electricVehicleId;
+                const name      = it.name ?? it.model ?? '';
+                const unit      = it.unitPrice ?? it.price ?? 0;
+                const qty       = it.qty ?? it.quantity ?? 1;
+                const line      = it.lineTotal ?? (unit * qty);
+                const img       = it.imageUrl ?? '';
+                const color     = it.color ?? '';
 
-                data.items.forEach(it => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${it.name}</td>
-                        <td>${it.unitPrice.toLocaleString()}</td>
-                        <td><input class="form-control qty-input" type="number" min="1" value="${it.quantity}" data-id="${it.electricVehicleId}"></td>
-                        <td class="fw-bold">${it.lineTotal.toLocaleString()}</td>
-                        <td class="text-end"><button class="btn btn-sm btn-outline-danger btn-remove" data-id="${it.electricVehicleId}">Xóa</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                const row = document.importNode(tpl, true);
+                row.querySelector('tr').dataset.id = id;
+                row.querySelector('.cart-name').textContent = name;
+                const imgEl = row.querySelector('.cart-img');
+                if(img){ imgEl.src = img; } else { imgEl.style.display='none'; }
+                const colorWrap = row.querySelector('.cart-color');
+                if(color){ colorWrap.style.display=''; colorWrap.querySelector('span').textContent = color; }
 
-                document.getElementById("cart-total").textContent = data.total.toLocaleString();
+                row.querySelector('.cart-unit').textContent   = unit.toLocaleString('vi-VN');
+                row.querySelector('.qty-input').value         = qty;
+                row.querySelector('.qty-input').dataset.id    = id;
+                row.querySelector('.line-total').textContent  = line.toLocaleString('vi-VN');
+                row.querySelector('.btn-remove').dataset.id   = id;
+
+                tbody.appendChild(row);
+              });
+              totalEl.textContent = (data.total ?? 0).toLocaleString('vi-VN');
             }
+
         })();
     </script>
 }
+
+<template id="cart-row-tpl">
+    <tr data-id="">
+        <td>
+            <div class="d-flex align-items-center">
+                <img class="me-2 cart-img" src="" alt=""
+                     style="width:60px;height:40px;object-fit:cover" onerror="this.style.display='none'">
+                <div>
+                    <div class="fw-semibold cart-name"></div>
+                    <div class="text-muted small cart-color" style="display:none">Màu: <span></span></div>
+                </div>
+            </div>
+        </td>
+        <td class="cart-unit"></td>
+        <td>
+            <input class="form-control qty-input" type="number" min="1" value="" data-id="">
+        </td>
+        <td class="line-total fw-bold"></td>
+        <td class="text-end">
+            <button class="btn btn-sm btn-outline-danger btn-remove" data-id="">Xóa</button>
+        </td>
+    </tr>
+</template>
+
