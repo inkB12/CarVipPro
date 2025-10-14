@@ -1,0 +1,89 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.DriveTest.CreateCustomerModel
+@{
+    ViewData["Title"] = "Thêm mới khách hàng";
+    Layout = "_LayoutStaff";
+}
+
+<h2 class="text-xl font-semibold mb-4">➕ Thêm mới khách hàng</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert">@Model.Message</div>
+}
+
+<form method="post" class="add-form">
+    <div class="form-group">
+        <label>Họ tên *</label>
+        <input asp-for="NewCustomer.FullName" required />
+    </div>
+    <div class="form-group">
+        <label>Email *</label>
+        <input asp-for="NewCustomer.Email" required />
+    </div>
+    <div class="form-group">
+        <label>Số điện thoại</label>
+        <input asp-for="NewCustomer.Phone" />
+    </div>
+    <div class="form-group">
+        <label>CMND</label>
+        <input asp-for="NewCustomer.IdentityCard" />
+    </div>
+    <div class="form-group">
+        <label>Địa chỉ</label>
+        <input asp-for="NewCustomer.Address" />
+    </div>
+    <button type="submit" class="btn-submit">Tạo khách hàng &raquo;</button>
+</form>
+
+@section Scripts {
+    <style>
+        .add-form {
+            max-width: 500px;
+            margin-top: 15px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+            .btn-submit:hover {
+                opacity: 0.9;
+            }
+
+        .alert {
+            background-color: #ffeeba;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+    </style>
+}

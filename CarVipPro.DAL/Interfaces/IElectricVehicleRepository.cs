@@ -1,4 +1,5 @@
-﻿using CarVipPro.DAL.Entities;
+﻿
+using CarVipPro.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace CarVipPro.DAL.Interfaces
 {
     public interface IElectricVehicleRepository
     {
+        Task<List<ElectricVehicle>> GetActiveByCompanyAsync(int companyId);
         Task<IEnumerable<ElectricVehicle>> GetAllAsync();
         Task<ElectricVehicle> GetByIdAsync(int id);
         Task AddAsync(ElectricVehicle vehicle);

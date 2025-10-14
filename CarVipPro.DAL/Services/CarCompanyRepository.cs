@@ -1,4 +1,5 @@
-﻿using CarVipPro.DAL.Entities;
+﻿
+using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,6 +29,7 @@ namespace CarVipPro.DAL.Services
             _context.CarCompanies.Update(company);
             await _context.SaveChangesAsync();
         }
+
         public async Task DeleteAsync(int id)
         {
             var company = await _context.CarCompanies.FindAsync(id);
@@ -37,10 +39,18 @@ namespace CarVipPro.DAL.Services
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<bool> ExistsByNameAsync(string name)
         {
             return await _context.CarCompanies
                 .AnyAsync(c => c.CatalogName.ToLower() == name.ToLower());
+        }
+
+        public async Task<List<CarCompany>> GetActiveAsync()
+        {
+            return await _context.CarCompanies
+                .Where(c => c.IsActive)
+                .ToListAsync();
         }
     }
 }

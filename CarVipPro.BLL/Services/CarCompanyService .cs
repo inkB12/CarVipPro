@@ -16,6 +16,16 @@ namespace CarVipPro.BLL.Services
             _vehicleRepo = vehicleRepo;
         }
 
+        public async Task<List<CarCompanyDTO>> GetActiveCompaniesAsync()
+        {
+            var companies = await _companyRepo.GetActiveAsync();
+            return companies.Select(c => new CarCompanyDTO
+            {
+                Id = c.Id,
+                CatalogName = c.CatalogName
+            }).ToList();
+        }
+
         public async Task<IEnumerable<CarCompanyDTO>> GetAll()
         {
             var companies = await _companyRepo.GetAllAsync();

@@ -1,4 +1,5 @@
-﻿using CarVipPro.DAL.Entities;
+﻿
+using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -15,6 +16,12 @@ namespace CarVipPro.DAL.Services
             _context = context;
         }
 
+        public async Task<List<ElectricVehicle>> GetActiveByCompanyAsync(int companyId)
+        {
+            return await _context.ElectricVehicles
+                .Where(v => v.CarCompanyId == companyId && v.IsActive)
+                .ToListAsync();
+        }
         public async Task<IEnumerable<ElectricVehicle>> GetAllAsync()
         {
             return await _context.ElectricVehicles

@@ -1,4 +1,5 @@
-﻿using CarVipPro.BLL.Dtos;
+﻿
+using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
@@ -16,14 +17,23 @@ namespace CarVipPro.BLL.Services
             _vehicleRepo = vehicleRepo;
         }
 
+        public async Task<List<ElectricVehicleDTO>> GetActiveByCompanyAsync(int companyId)
+        {
+            var vehicles = await _vehicleRepo.GetActiveByCompanyAsync(companyId);
+            return vehicles.Select(v => new ElectricVehicleDTO
+            {
+                Id = v.Id,
+                Model = v.Model,
+                Color = v.Color
+            }).ToList();
+        }
+
         public async Task<IEnumerable<ElectricVehicleDTO>> GetAll()
         {
             var vehicles = await _vehicleRepo.GetAllAsync();
 
             return vehicles.Select(v => new ElectricVehicleDTO
             {
-                Id = v.Id,
-                Model = v.Model,
                 Version = v.Version,
                 Price = v.Price,
                 Color = v.Color,
@@ -36,7 +46,7 @@ namespace CarVipPro.BLL.Services
                 // 🟢 Bổ sung 2 dòng này
                 CarCompanyName = v.CarCompany != null ? v.CarCompany.CatalogName : "Không rõ",
                 CategoryName = v.Category != null ? v.Category.CategoryName : "Không rõ"
-            });
+            }).ToList();
         }
 
         public async Task<ElectricVehicleDTO?> GetById(int id)
