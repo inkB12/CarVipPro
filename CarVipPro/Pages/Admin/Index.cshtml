@@ -1,0 +1,222 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.IndexModel
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Bảng điều khiển quản trị";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<div class="container-fluid px-3 animate__animated animate__fadeIn">
+    <h3 class="fw-bold mb-4 text-light">👋 Chào mừng trở lại, <span class="text-primary">Admin</span>!</h3>
+
+    <!-- Spinner khi load -->
+    <div id="loadingSpinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-secondary">Đang tải dữ liệu...</p>
+    </div>
+
+    <div id="dashboardContent" style="display:none;">
+        <!-- Cards thống kê -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" style="animation-delay:0.1s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-building fs-2 text-primary"></i>
+                        <h2 class="fw-bold mt-2 counter" data-target="@Model.TotalCompanies">0</h2>
+                        <p class="text-secondary mb-0">Hãng Xe</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" style="animation-delay:0.2s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-lightning-charge fs-2 text-warning"></i>
+                        <h2 class="fw-bold mt-2 counter" data-target="@Model.TotalVehicles">0</h2>
+                        <p class="text-secondary mb-0">Xe Điện</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" style="animation-delay:0.3s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tags fs-2 text-success"></i>
+                        <h2 class="fw-bold mt-2 counter" data-target="@Model.TotalCategories">0</h2>
+                        <p class="text-secondary mb-0">Loại Xe</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" style="animation-delay:0.4s;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-2 text-info"></i>
+                        <h2 class="fw-bold mt-2 counter" data-target="">0</h2>
+                        <p class="text-secondary mb-0">Người Dùng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card animate__animated animate__zoomIn" id="barChartCard">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-light"><i class="bi bi-bar-chart-line"></i> Thống kê tổng quan</h6>
+                        <canvas id="adminChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" id="pieChartCard">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-light"><i class="bi bi-pie-chart"></i> Tỉ lệ Xe / Hãng</h6>
+                        <canvas id="pieChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card animate__animated animate__zoomIn" id="userChartCard">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-light"><i class="bi bi-person-lines-fill"></i> Tăng trưởng Người Dùng</h6>
+                        <canvas id="userChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Khi load trang xong, ẩn spinner và hiện dashboard
+        window.addEventListener("load", function () {
+            setTimeout(() => {
+                document.getElementById("loadingSpinner").style.display = "none";
+                document.getElementById("dashboardContent").style.display = "block";
+                animateCounters();
+            }, 800);
+        });
+
+        // Hiệu ứng số đếm tăng dần
+        function animateCounters() {
+            document.querySelectorAll(".counter").forEach(counter => {
+                const target = +counter.getAttribute("data-target");
+                let count = 0;
+                const speed = 20;
+                const step = target / 50;
+
+                const updateCount = () => {
+                    count += step;
+                    if (count < target) {
+                        counter.innerText = Math.floor(count);
+                        setTimeout(updateCount, speed);
+                    } else {
+                        counter.innerText = target.toLocaleString();
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Hàm hiển thị biểu đồ khi vào vùng nhìn thấy
+        function animateChart(chartElement, callback) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        chartElement.classList.add("animate__animated", "animate__zoomIn");
+                        if (callback) callback();
+                        observer.disconnect();
+                    }
+                });
+            });
+            observer.observe(chartElement);
+        }
+
+        // Biểu đồ chính
+        const barCtx = document.getElementById('adminChart');
+        const pieCtx = document.getElementById('pieChart');
+        const userCtx = document.getElementById('userChart');
+
+        // Bar Chart
+        animateChart(barCtx, () => {
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hãng Xe', 'Xe Điện', 'Loại Xe', 'Người Dùng'],
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: [@Model.TotalCompanies, @Model.TotalVehicles, @Model.TotalCategories],
+                        backgroundColor: ['#6366f1', '#facc15', '#22d3ee', '#06b6d4'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: { duration: 1500, easing: 'easeOutBack' },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        });
+
+        // Pie Chart
+        animateChart(pieCtx, () => {
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Xe Điện', 'Hãng Xe', 'Loại Xe'],
+                    datasets: [{
+                        data: [@Model.TotalVehicles, @Model.TotalCompanies, @Model.TotalCategories],
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#22d3ee']
+                    }]
+                },
+                options: {
+                    animation: { animateScale: true, animateRotate: true, duration: 1500 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#e2e8f0' } }
+                    }
+                }
+            });
+        });
+
+        // 🧑‍💻 User Line Chart
+        animateChart(userCtx, () => {
+            new Chart(userCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
+                    datasets: [{
+                        label: 'Người dùng mới',
+                        data: [5, 10, 12, 20, 30, 28, 35, 42, 50, 46, 55, 62],
+                        borderColor: '#22d3ee',
+                        backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: { duration: 2000, easing: 'easeOutCubic' },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        });
+    </script>
+}

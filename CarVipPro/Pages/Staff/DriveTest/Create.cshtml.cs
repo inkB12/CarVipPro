@@ -33,8 +33,8 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
         public int CustomerId { get; set; }
 
         public CustomerDto? Customer { get; set; }
-        public List<CarCompanyDto> CarCompanies { get; set; } = new();
-        public List<ElectricVehicleDto> Vehicles { get; set; } = new();
+        public List<CarCompanyDTO> CarCompanies { get; set; } = new();
+        public List<ElectricVehicleDTO> Vehicles { get; set; } = new();
         public List<DriveScheduleViewDto> ExistingSchedules { get; set; } = new();
 
         [BindProperty]
