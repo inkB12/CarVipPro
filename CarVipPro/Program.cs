@@ -76,7 +76,7 @@ namespace CarVipPro
             app.UseSession();
 
             // Map hub
-            app.MapHub<CartHub>("/hubs/cart");
+            app.MapHub<CartHub>("/cartHub");
 
             app.UseAuthorization();
 

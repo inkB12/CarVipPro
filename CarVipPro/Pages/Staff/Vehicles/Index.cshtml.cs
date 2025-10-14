@@ -1,11 +1,4 @@
-﻿using CarVipPro.APrenstationLayer.Hubs;
-using CarVipPro.APrenstationLayer.Infrastructure;
-using CarVipPro.BLL.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.SignalR;
-
-namespace CarVipPro.APrenstationLayer.Pages.Staff.Vehicles
+﻿namespace CarVipPro.APrenstationLayer.Pages.Staff.Vehicles
 {
     using CarVipPro.APrenstationLayer.Infrastructure;
     using CarVipPro.APrenstationLayer.Hubs;
@@ -14,7 +7,7 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Vehicles
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.AspNetCore.SignalR;
 
-    [IgnoreAntiforgeryToken] // dùng nếu gọi AJAX mà không gửi token
+    [IgnoreAntiforgeryToken]
     public class IndexModel : PageModel
     {
         private readonly IElectricVehicleService _evSvc;

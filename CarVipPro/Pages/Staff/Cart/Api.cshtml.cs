@@ -41,10 +41,14 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
             HttpContext.Session.SaveCart(cart);
 
             var channel = CartChannel.EnsureChannel(HttpContext.Session);
-            var count = cart.Items.Sum(x => x.Quantity);
-            await _hub.Clients.Group(channel).SendAsync("CartUpdated", count);
+            await _hub.Clients.Group(channel).SendAsync("CartUpdated", new
+            {
+                items = cart.Items,
+                total = cart.Total,
+                count = cart.Items.Sum(x => x.Quantity)
+            });
 
-            return new JsonResult(new { ok = true, total = cart.Total, count });
+            return new JsonResult(new { ok = true, total = cart.Total, count = cart.Items.Sum(x => x.Quantity) });
         }
 
         public async Task<IActionResult> OnPostRemove([FromBody] IdReq req)
@@ -55,17 +59,26 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
             HttpContext.Session.SaveCart(cart);
 
             var channel = CartChannel.EnsureChannel(HttpContext.Session);
-            var count = cart.Items.Sum(x => x.Quantity);
-            await _hub.Clients.Group(channel).SendAsync("CartUpdated", count);
+            await _hub.Clients.Group(channel).SendAsync("CartUpdated", new
+            {
+                items = cart.Items,
+                total = cart.Total,
+                count = cart.Items.Sum(x => x.Quantity)
+            });
 
-            return new JsonResult(new { ok = true, total = cart.Total, count });
+            return new JsonResult(new { ok = true, total = cart.Total, count = cart.Items.Sum(x => x.Quantity) });
         }
 
         public async Task<IActionResult> OnPostClear()
         {
             HttpContext.Session.ClearCart();
             var channel = CartChannel.EnsureChannel(HttpContext.Session);
-            await _hub.Clients.Group(channel).SendAsync("CartUpdated", 0);
+            await _hub.Clients.Group(channel).SendAsync("CartUpdated", new
+            {
+                items = Array.Empty<object>(),
+                total = 0m,
+                count = 0
+            });
             return new JsonResult(new { ok = true, total = 0, count = 0 });
         }
 
