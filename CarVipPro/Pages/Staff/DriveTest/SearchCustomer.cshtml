@@ -1,0 +1,303 @@
+﻿
+@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.DriveTest.SearchCustomerModel
+@{
+    ViewData["Title"] = "Tìm kiếm khách hàng";
+    Layout = "_LayoutStaff";
+}
+@functions {
+    public string GetStatusTooltip(string status)
+    {
+        return status switch
+        {
+            "COMING_SOON" => "Lịch lái thử sắp tới của khách hàng này.",
+            "COMPLETED" => "Lịch lái thử đã hoàn thành.",
+            "CANCELED" => "Lịch lái thử đã bị hủy.",
+            "PENDING" => "Lịch đang chờ xác nhận.",
+            "IN_PROGRESS" => "Khách hàng đang lái thử.",
+            _ => "Trạng thái không xác định."
+        };
+    }
+}
+<h2 class="text-xl font-semibold mb-4">🔍 Tìm kiếm khách hàng</h2>
+
+<div class="actions-bar" style="margin-bottom: 15px;">
+    <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">➕ Thêm khách hàng mới</a>
+</div>
+
+<form method="get" class="search-form">
+    <input type="text" name="Keyword" value="@Model.Keyword" placeholder="Nhập tên, email, SĐT hoặc CMND..." />
+    <button type="submit">Tìm kiếm</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p class="message">@Model.Message</p>
+}
+
+@if (Model.SearchResults?.Count > 0)
+{
+    <h3 class="mt-4">Kết quả tìm kiếm:</h3>
+    <table class="customer-table">
+        <thead>
+            <tr>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>SĐT</th>
+                <th>CMND</th>
+                <th>Lịch lái thử</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.SearchResults)
+            {
+                <tr>
+                    <td>@c.FullName</td>
+                    <td>@c.Email</td>
+                    <td>@c.Phone</td>
+                    <td>@c.IdentityCard</td>
+                    <td>
+                        @if (c.DriveSchedules?.Count > 0)
+                        {
+                            var groupedByDate = c.DriveSchedules
+                            .GroupBy(d => d.StartTime.Date)
+                            .OrderByDescending(g => g.Key);
+
+                            foreach (var group in groupedByDate)
+                            {
+                                <div class="schedule-group">
+                                    <h5>📅 @group.Key.ToString("dd/MM/yyyy")</h5>
+                                    <ul>
+                                        @foreach (var d in group)
+                                        {
+                                            <li>
+                                                🚗 <strong>@d.VehicleModel</strong><br />
+                                                🕒 @d.StartTime.ToString("HH:mm") - @d.EndTime.ToString("HH:mm") 
+                                                <span class="status-badge @(d.Status?.ToLower())" title="@GetStatusTooltip(d.Status)">
+                                                    @d.Status
+                                                </span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <em>Chưa có lịch lái thử</em>
+                        }
+                    </td>
+                    <td>
+                        <form method="post" asp-page-handler="Select">
+                            <input type="hidden" name="customerId" value="@c.Id" />
+                            <button type="submit" class="btn-select">Chọn</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrEmpty(Model.Keyword))
+{
+    <div class="no-result">
+        <p>❌ Không tìm thấy khách hàng phù hợp.</p>
+        <p>Bạn có muốn thêm mới khách hàng không?</p>
+
+        <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">
+            ➕ Thêm khách hàng mới
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-form input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .search-form button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .customer-table {
+            width: 100%;
+            border-collapse: separate; /* cho phép bo góc */
+            border-spacing: 0; /* bỏ khoảng cách giữa ô */
+            margin-top: 20px;
+            background: #fff;
+            border: 2px solid #007bff; /* viền ngoài đậm màu xanh */
+            border-radius: 10px;
+            overflow: hidden; /* để viền bo góc hiển thị đẹp */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .customer-table thead {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .customer-table th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #0056b3; /* viền dưới header đậm hơn */
+        }
+
+        .customer-table td {
+            padding: 10px;
+            border-bottom: 1.5px solid #ccc; /* viền ngăn giữa các dòng */
+            vertical-align: top;
+            background-color: #fafafa;
+            transition: background 0.2s ease;
+        }
+
+        .customer-table tr:hover td {
+            background-color: #f0f8ff; /* màu sáng khi hover */
+        }
+
+        .customer-table tr:last-child td {
+            border-bottom: none; /* bỏ viền cuối cùng */
+        }
+
+        .customer-table td:first-child {
+            border-left: none;
+        }
+
+        .customer-table td:last-child {
+            border-right: none;
+        }
+
+        .customer-table th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        .customer-table th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        .customer-table tbody tr:hover {
+            transform: scale(1.01);
+            transition: all 0.15s ease-in-out;
+        }
+
+        .btn-select, .btn-add {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-select:hover, .btn-add:hover {
+            opacity: 0.9;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #555;
+        }
+        /* 🎨 Màu trạng thái lịch lái thử */
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .status-badge:hover {
+            opacity: 0.85;
+            transform: scale(1.05);
+            transition: all 0.2s ease;
+        }
+
+        .status-badge.coming_soon {
+            background-color: #28a745; /* xanh lá */
+        }
+
+        .status-badge.completed {
+            background-color: #007bff; /* xanh dương */
+        }
+
+        .status-badge.canceled {
+            background-color: #dc3545; /* đỏ */
+        }
+
+        .status-badge.pending {
+            background-color: #ffc107; /* vàng */
+            color: black;
+        }
+
+        .status-badge.in_progress {
+            background-color: #17a2b8; /* xanh cyan */
+        }
+
+        .schedule-group {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            background-color: #fefefe;
+        }
+
+        .schedule-group h5 {
+            margin: 0 0 6px 0;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .btn-add-new {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+
+        .btn-add-new:hover {
+            opacity: 0.9;
+        }
+
+        .btn-add-new {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+
+            .btn-add-new:hover {
+                opacity: 0.9;
+            }
+
+        .no-result {
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .no-result p {
+            margin: 6px 0;
+        }
+    </style>
+}

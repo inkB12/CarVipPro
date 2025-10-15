@@ -1,0 +1,112 @@
+﻿@*
+    Layout dành riêng cho Staff
+    Dùng cho các trang: SearchCustomer, CreateSchedule, OrderFromCompany,...
+*@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CarVipPro Staff</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Header */
+        header {
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo img {
+            height: 32px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin: 0 1rem;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #007bff;
+        }
+
+        .account-actions a {
+            text-decoration: none;
+            margin-left: 1.2rem;
+            font-weight: 500;
+        }
+
+        .account-actions .logout {
+            color: #dc3545;
+        }
+
+        /* Main Layout */
+        .layout-container {
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-top: 1px solid #e5e5e5;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="~/images/car.jpg" alt="CarVipPro" />
+            <span><strong>CarVipPro Staff</strong></span>
+        </div>
+        <nav>
+            <a href="/Staff/Dashboard">Trang chủ</a>
+            <a href="/Staff/DriveTest/SearchCustomer">Lái thử</a>
+            <a href="/Staff/Order/List">Đơn hàng</a>
+            <a href="/Staff/Inventory">Kho xe</a>
+        </nav>
+        <div class="account-actions">
+            <a href="/Staff/Profile"><i class="fa fa-user"></i> Tài khoản</a>
+            <a class="logout" href="/Logout"><i class="fa fa-right-from-bracket"></i> Đăng xuất</a>
+        </div>
+    </header>
+
+    <main class="layout-container">
+        <div class="right-panel" style="flex: 1; background: #fff; overflow-y: auto; padding: 2rem 3rem;">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer>
+        © 2025 CarVipPro Staff Portal. All rights reserved.
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+</html>

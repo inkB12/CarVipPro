@@ -1,10 +1,9 @@
-using CarVipPro.APrenstationLayer.Hubs;
+﻿using CarVipPro.APrenstationLayer.Hubs;
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.BLL.Services;
 using CarVipPro.DAL;
 using CarVipPro.DAL.Interfaces;
 using CarVipPro.DAL.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarVipPro
@@ -54,6 +53,24 @@ namespace CarVipPro
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            // Add SignalR
+            builder.Services.AddSignalR();
+
+            // 3️⃣ Add Repositories (DAL)
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<IDriveScheduleRepository, DriveScheduleRepository>();
+            builder.Services.AddScoped<ICarCompanyRepository, CarCompanyRepository>();
+            builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
+
+            // 4️⃣ Add Services (BLL)
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IDriveScheduleService, DriveScheduleService>();
+            builder.Services.AddScoped<ICarCompanyService, CarCompanyService>();
+            builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
 
             // SignalR
             builder.Services.AddSignalR();
@@ -89,6 +106,7 @@ namespace CarVipPro
             });
 
             app.MapRazorPages();
+            app.MapHub<NotifyHub>("/hubs/notify");
 
             app.Run();
         }
