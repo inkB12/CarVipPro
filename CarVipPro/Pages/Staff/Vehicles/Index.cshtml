@@ -1,0 +1,194 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.Vehicles.IndexModel
+@{
+    ViewData["Title"] = "Tìm xe";
+}
+
+<h2 class="mb-3 d-flex align-items-center justify-content-between">
+    <span>Tạp đơn hàng</span>
+    <button class="btn btn-outline-secondary btn-sm" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" id="openCartBtn">
+        Xem giỏ hàng
+    </button>
+</h2>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info">Không có xe nào phù hợp.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+        @foreach (var v in Model.Items)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img class="card-img-top" src="@v.ImageUrl" alt="@v.Model" onerror="this.style.display='none'">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @v.Model
+                            @if (!string.IsNullOrWhiteSpace(v.Version))
+                            {
+                                <small class="text-muted">(@v.Version)</small>
+                            }
+                        </h5>
+                        <p class="card-text mb-1">Màu: @v.Color</p>
+                        <p class="card-text fw-bold">Giá: @v.Price.ToString("n0")</p>
+
+                        <div class="input-group">
+                            <input class="form-control qty-input" type="number" value="1" min="1" />
+                            <button class="btn btn-success add-btn" data-id="@v.Id">Add to cart</button>
+                        </div>
+
+                        <div class="text-success small mt-1 d-none success-msg">Đã thêm vào giỏ</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!--OFFCANVAS CART-->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel" style="width:420px;">
+    <div class="offcanvas-header">
+        <h5 id="cartDrawerLabel" class="mb-0">Giỏ hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div id="cartList" class="list-group list-group-flush"></div>
+        <div class="border-top p-3 mt-auto">
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-semibold">Tổng:</div>
+                <div class="fw-bold" id="cartTotal">0</div>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="btn btn-success flex-grow-1" href="/Staff/Cart">Thanh toán</a>
+                <button class="btn btn-outline-danger" id="clearCartBtn" type="button">Clear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function isDrawerOpen(){
+          const el = document.getElementById('cartDrawer');
+          return el && el.classList.contains('show');
+        }
+        function fmt(n){ return (n||0).toLocaleString(); }
+        function esc(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+        async function loadCart(){
+          try{
+            const res = await fetch('/Staff/Cart/Api?handler=Items');
+            if(!res.ok){ console.warn('Items HTTP', res.status); return; }
+            const data = await res.json();
+            renderCart(data);
+          }catch(e){ console.error('Items error', e); }
+        }
+
+        function renderCart(data){
+          const list = document.getElementById('cartList');
+          list.innerHTML = '';
+          if(!data || !data.items || data.items.length===0){
+            list.innerHTML = '<div class="p-3 text-muted">Giỏ hàng trống.</div>';
+            document.getElementById('cartTotal').textContent = '0';
+            return;
+          }
+          data.items.forEach(it=>{
+            const row = document.createElement('div');
+            row.className = 'list-group-item';
+            row.innerHTML = `
+              <div class="d-flex">
+                <img src="${it.imageUrl||''}" onerror="this.style.display='none'"
+                     style="width:72px;height:48px;object-fit:cover" class="me-2">
+                <div class="flex-grow-1">
+                  <div class="d-flex justify-content-between">
+                    <div class="fw-semibold">${esc(it.name)} ${it.color?`<span class="text-muted">(${esc(it.color)})</span>`:''}</div>
+                    <button class="btn btn-sm btn-outline-danger remove" data-id="${it.id}">X</button>
+                  </div>
+                  <div class="text-muted small">Đơn giá: ${fmt(it.unitPrice)}</div>
+                  <div class="d-flex align-items-center mt-1 gap-2">
+                    <div class="input-group input-group-sm" style="width:130px;">
+                      <button class="btn btn-outline-secondary minus" data-id="${it.id}" type="button">-</button>
+                      <input class="form-control qty" data-id="${it.id}" type="number" min="1" value="${it.qty}">
+                      <button class="btn btn-outline-secondary plus" data-id="${it.id}" type="button">+</button>
+                    </div>
+                    <div class="ms-auto fw-bold">= ${fmt(it.lineTotal)}</div>
+                  </div>
+                </div>
+              </div>`;
+            list.appendChild(row);
+          });
+          document.getElementById('cartTotal').textContent = fmt(data.total);
+        }
+
+        document.getElementById('openCartBtn')?.addEventListener('click', loadCart);
+
+        document.getElementById('clearCartBtn')?.addEventListener('click', async ()=>{
+          if(!confirm('Xoá toàn bộ giỏ hàng?')) return;
+          await fetch('/Staff/Cart/Api?handler=Clear', { method:'POST' });
+          await loadCart();
+        });
+
+        document.getElementById('cartList')?.addEventListener('click', async (e)=>{
+          const minus=e.target.closest('.minus'), plus=e.target.closest('.plus'), rm=e.target.closest('.remove');
+          if(minus || plus){
+            const id = Number((minus||plus).dataset.id);
+            const input = document.querySelector(`input.qty[data-id="${id}"]`);
+            let qty = parseInt(input.value||'1',10); qty = isNaN(qty)?1:qty;
+            if(minus) qty = Math.max(1, qty-1);
+            if(plus)  qty = qty+1;
+            input.value = qty;
+            await fetch('/Staff/Cart/Api?handler=Update',{
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({id,qty})
+            });
+            await loadCart();
+          }
+          if(rm){
+            const id = Number(rm.dataset.id);
+            await fetch('/Staff/Cart/Api?handler=Remove',{
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({id})
+            });
+            await loadCart();
+          }
+        });
+
+        document.addEventListener('change', async (e)=>{
+          const input = e.target.closest('input.qty'); if(!input) return;
+          const id = Number(input.dataset.id);
+          let qty = Math.max(1, parseInt(input.value||'1',10)); input.value = qty;
+          await fetch('/Staff/Cart/Api?handler=Update',{
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({id,qty})
+          });
+          await loadCart();
+        });
+
+        document.addEventListener('click', async (e) => {
+          const btn = e.target.closest('.add-btn');
+          if (!btn) return;
+
+          const parent = btn.closest('.card-body');
+          const qtyInput = parent.querySelector('.qty-input');
+          const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
+          const id = btn.dataset.id;
+
+          try {
+            const res = await fetch(`?handler=AddJson`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: Number(id), qty })
+            });
+            const data = await res.json();
+            if (data?.ok) {
+              const msg = parent.querySelector('.success-msg');
+              if (msg) { msg.classList.remove('d-none'); setTimeout(()=>msg.classList.add('d-none'), 1500); }
+              if (isDrawerOpen()) await loadCart();
+            }
+          } catch (err) { console.error(err); }
+        });
+    </script>
+}

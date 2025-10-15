@@ -1,4 +1,5 @@
-﻿using CarVipPro.DAL.Entities;
+﻿using CarVipPro.BLL.Dtos;
+using CarVipPro.DAL.Entities;
 
 namespace CarVipPro.BLL.Interfaces
 {
@@ -10,7 +11,7 @@ namespace CarVipPro.BLL.Interfaces
         Task<(bool ok, string message, Account? data)> RegisterAsync(
             string email, string password, string fullName, string? phone, string role = "Staff");
 
-        Task<(bool ok, string message, Account? data)> LoginAsync(string email, string password);
+        Task<AccountDTO?> LoginAsync(string email, string password);
 
         Task<(bool ok, string message, Account? data)> CreateAsync(Account account);
         Task<(bool ok, string message, Account? data)> UpdateAsync(Account account);

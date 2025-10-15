@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
+using CarVipPro.BLL.Dtos;
 
 namespace CarVipPro.BLL.Services
 {
@@ -47,16 +48,24 @@ namespace CarVipPro.BLL.Services
         }
 
         // Login
-        public async Task<(bool ok, string message, Account? data)> LoginAsync(string email, string password)
+        public async Task<AccountDTO?> LoginAsync(string email, string password)
         {
             var acc = await _repo.GetByEmailAsync(email);
-            if (acc == null) return (false, "Email not found", null);
-            if (acc.IsActive == false) return (false, "Account is disabled", null);
+            if (acc == null) return null;
+            if (acc.IsActive == false) return null;
 
             if (HashSHA256(password) != acc.Password)
-                return (false, "Wrong Email or Password", null);
+                return null;
 
-            return (true, "Login success", acc);
+            return new AccountDTO
+            {
+                Id = acc.Id,
+                Email = acc.Email,
+                Phone = acc.Phone,
+                FullName = acc.FullName,
+                Role = acc.Role,
+                IsActive = acc.IsActive
+            }; 
         }
 
         // Create (dùng cho admin tạo tài khoản)

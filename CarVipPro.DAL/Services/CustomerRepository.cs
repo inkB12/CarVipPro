@@ -50,5 +50,7 @@ namespace CarVipPro.DAL.Services
             await _context.SaveChangesAsync();
             return customer;
         }
+        public Task<Customer?> GetByIdAsync(int id) =>
+            _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
     }
 }

@@ -31,11 +31,16 @@ namespace CarVipPro
             builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
             builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
 
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
             builder.Services.AddRazorPages()
-    .AddViewOptions(options =>
-    {
-        options.HtmlHelperOptions.ClientValidationEnabled = true;
-    });
+            .AddViewOptions(options =>
+            {
+                options.HtmlHelperOptions.ClientValidationEnabled = true;
+            });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(o =>
             {
@@ -67,6 +72,9 @@ namespace CarVipPro
             builder.Services.AddScoped<IEmailService, EmailService>();
 
 
+            // SignalR
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -83,6 +91,9 @@ namespace CarVipPro
             app.UseRouting();
 
             app.UseSession();
+
+            // Map hub
+            app.MapHub<CartHub>("/cartHub");
 
             app.UseAuthorization();
 

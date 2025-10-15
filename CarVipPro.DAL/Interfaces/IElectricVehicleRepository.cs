@@ -17,5 +17,7 @@ namespace CarVipPro.DAL.Interfaces
         Task UpdateAsync(ElectricVehicle vehicle);
         Task DeleteAsync(int id);
         Task<bool> ExistsByModelAsync(string model);
+
+        Task<Dictionary<int, ElectricVehicle>> GetActiveByIdsAsync(IEnumerable<int> ids);
     }
 }

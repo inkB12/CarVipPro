@@ -64,5 +64,13 @@ namespace CarVipPro.DAL.Services
         {
             return await _context.ElectricVehicles.AnyAsync(v => v.Model == model);
         }
+
+        public async Task<Dictionary<int, ElectricVehicle>> GetActiveByIdsAsync(IEnumerable<int> ids)
+        {
+            var list = await _context.ElectricVehicles.AsNoTracking()
+                          .Where(e => ids.Contains(e.Id) && e.IsActive)
+                          .ToListAsync();
+            return list.ToDictionary(e => e.Id);
+        }
     }
 }
