@@ -22,7 +22,8 @@
 <h2 class="text-xl font-semibold mb-4">🔍 Tìm kiếm khách hàng</h2>
 
 <div class="actions-bar" style="margin-bottom: 15px;">
-    <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">➕ Thêm khách hàng mới</a>
+    <a asp-page="/Staff/DriveTest/CreateCustomer" class="btn-add-new">➕ Thêm khách hàng mới</a>
+    <a asp-page="/Staff/DriveTest/Schedules" class="btn-schedule-view">🗓️ Xem Lịch Lái Thử</a>
 </div>
 
 <form method="get" class="search-form">
@@ -105,7 +106,7 @@ else if (!string.IsNullOrEmpty(Model.Keyword))
         <p>❌ Không tìm thấy khách hàng phù hợp.</p>
         <p>Bạn có muốn thêm mới khách hàng không?</p>
 
-        <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">
+        <a asp-page="/Staff/DriveTest/CreateCustomer" class="btn-add-new">
             ➕ Thêm khách hàng mới
         </a>
     </div>
@@ -207,6 +208,20 @@ else if (!string.IsNullOrEmpty(Model.Keyword))
         .btn-select:hover, .btn-add:hover {
             opacity: 0.9;
         }
+
+        .btn-schedule-view {
+            background-color: #17a2b8; /* Màu xanh dương/cyan (ví dụ) */
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+            .btn-schedule-view:hover {
+                opacity: 0.9;
+            }
 
         .message {
             margin-top: 10px;

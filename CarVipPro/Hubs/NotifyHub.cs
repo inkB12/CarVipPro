@@ -9,5 +9,10 @@ namespace CarVipPro.APrenstationLayer.Hubs
         {
             await Clients.All.SendAsync("ReceiveDriveScheduleStatus", scheduleId, newStatus);
         }
+
+        public async Task JoinScheduleUpdates()
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, "ScheduleUpdates");
+        }
     }
 }

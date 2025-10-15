@@ -1,0 +1,120 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.DriveTest.EditScheduleModel
+@{
+	ViewData["Title"] = "Chỉnh sửa lịch lái thử";
+	Layout = "_LayoutStaff";
+}
+
+<h2 class="text-xl font-semibold mb-4">✏️ Chỉnh sửa lịch lái thử ID: @Model.Schedule.Id</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-danger">@Model.Message</div>
+}
+
+<form method="post" class="edit-form">
+
+    <input type="hidden" asp-for="Schedule.Id" />
+
+    <div class="form-group">
+        <label>Ngày lái thử:</label>
+        <input type="date" asp-for="SelectedDate" class="form-control" />
+        <span asp-validation-for="SelectedDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Thời gian bắt đầu:</label>
+        <input type="time" asp-for="Schedule.StartTime" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Thời gian kết thúc:</label>
+        <input type="time" asp-for="Schedule.EndTime" class="form-control" />
+        <span asp-validation-for="Schedule.EndTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Trạng thái:</label>
+        <select asp-for="Schedule.Status" class="form-control">
+            <option value="COMING_SOON">Sắp tới</option>
+            <option value="IS_HAPPENING">Đang tiến hành</option>
+            <option value="COMPLETED">Đã hoàn thành</option>
+            <option value="CANCELLED">Đã hủy</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+    <a asp-page="Schedules" class="btn-cancel">Hủy</a>
+</form>
+
+@section Scripts {
+    <style>
+        .edit-form {
+            max-width: 600px;
+            margin-top: 20px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057; /* Màu chữ label */
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+            .form-control:focus {
+                border-color: #80bdff;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
+
+        /* Nút Lưu và Hủy */
+        .btn-submit {
+            background-color: #28a745; /* Màu xanh lá cây (Success) */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+            .btn-submit:hover {
+                background-color: #218838;
+            }
+
+        .btn-cancel {
+            /* Nút Hủy nên là liên kết */
+            color: #6c757d; /* Màu xám (Secondary) */
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 10px 0;
+            font-weight: 500;
+        }
+
+        /* Hiển thị thông tin khách hàng (ReadOnly) */
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            color: #6c757d;
+        }
+    </style>
+}

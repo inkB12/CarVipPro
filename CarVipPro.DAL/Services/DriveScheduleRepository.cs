@@ -30,12 +30,54 @@ namespace CarVipPro.DAL.Services
                 .ToListAsync();
         }
 
+        // 📅 Lấy danh sách lịch theo ngày (Dynamic Searching)
+        public async Task<List<DriveSchedule>> GetSchedulesByDateAsync(int vehicleId, DateTime date = default)
+        {
+            IQueryable<DriveSchedule> query = _context.DriveSchedules
+                   .Include(ds => ds.Customer)
+                   .Include(ds => ds.ElectricVehicle);
+
+            if (vehicleId > 0)
+            {
+                query = query.Where(ds => ds.ElectricVehicleId == vehicleId);
+            }
+
+            if (date != default)
+            {
+                var start = date.Date;
+                var end = start.AddDays(1);
+
+                query = query.Where(ds => ds.StartTime >= start && ds.StartTime < end);
+            }
+
+            return await query
+                .OrderBy(ds => ds.StartTime)
+                .ToListAsync();
+        }
+
         // ➕ Thêm mới lịch lái thử
         public async Task<DriveSchedule> AddAsync(DriveSchedule schedule)
         {
             _context.DriveSchedules.Add(schedule);
             await _context.SaveChangesAsync();
             return schedule;
+        }
+
+        public async Task<DriveSchedule> UpdateAsync(DriveSchedule schedule)
+        {
+            _context.DriveSchedules.Update(schedule);
+            await _context.SaveChangesAsync();
+            return schedule;
+        }
+
+        public async Task<DriveSchedule?> GetDriveScheduleByIdAsync(int? id = 0)
+        {
+            return await _context.DriveSchedules
+                .Include(d => d.Customer)
+                .Include(d => d.ElectricVehicle)
+                .Include(d => d.Account)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(ds => ds.Id == id);
         }
     }
 }

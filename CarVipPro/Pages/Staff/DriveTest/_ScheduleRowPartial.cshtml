@@ -1,0 +1,24 @@
+﻿@model CarVipPro.BLL.Dtos.DriveScheduleViewDto
+@{
+
+}
+
+<tr id="schedule-@Model.Id">
+    <td>
+        @Model.StartTime.ToString("HH:mm") - @Model.EndTime.ToString("HH:mm")
+        <br />
+        <small class="text-muted">(@Model.StartTime.ToString("dd/MM/yyyy"))</small>
+    </td>
+    <td>@Model.CustomerName</td>
+    <td>@Model.VehicleModel</td>
+    <td>
+        <span class="status-badge @(Model.Status?.ToLower())">@Model.Status</span>
+    </td>
+    <td>
+        <a asp-page="/Staff/DriveTest/EditSchedule"
+           asp-route-scheduleId="@Model.Id"
+           class="btn-edit">
+            ✏️ Chỉnh sửa
+        </a>
+    </td>
+</tr>
