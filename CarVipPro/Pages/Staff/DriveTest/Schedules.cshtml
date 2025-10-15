@@ -26,6 +26,12 @@
 	<button type="submit" class="btn-primary">Lọc</button>
 </form>
 
+<div class="actions-bar" style="margin-bottom: 15px;">
+	<a asp-page="/Staff/DriveTest/SearchCustomer" class="btn-back">
+		&larr; Quay lại trang tìm kiếm
+	</a>
+</div>
+
 <hr style="margin: 20px 0;" />
 
 <table class="schedule-table">
@@ -43,7 +49,7 @@
 		{
 			@foreach (var s in Model.Schedules)
 			{
-				<tr>
+				<tr id="schedule-@s.Id">
 					<td>
 						@s.StartTime.ToString("HH:mm") - @s.EndTime.ToString("HH:mm")
 						<br />
@@ -141,4 +147,54 @@
 			}
 	</style>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+	<script>
+		// 1. Create connection to hub
+		var connection = new signalR.HubConnectionBuilder()
+			.withUrl("/hubs/notify")
+			.withAutomaticReconnect()
+			.build();
+
+		// 2. Choose what function to call
+		connection.on("ReceiveScheduleUpdate", function(data){
+			console.log("Dữ liệu cập nhật từ Server:", data);
+
+			// Logic Update
+			const scheduleId = data.id;
+
+			const oldRow = document.getElementById(`schedule-${scheduleId}`)
+
+			const partialUrl = `/Staff/DriveTest/Schedules?handler=ScheduleRowPartial&scheduleId=${scheduleId}`;
+
+			if (oldRow){
+				fetch(partialUrl)
+				// Chuyển phản hồi thành chuỗi HTML
+				.then(response => response.text())
+				.then(newRowHtml => {
+					// .outerHTML sẽ thay thế toàn bộ phần tử (bao gồm thẻ <tr>) bằng HTML mới
+					 oldRow.outerHTML = newRowHtml;
+				})
+				.catch(error => console.error('Lỗi khi tải Partial View:', error));
+			}
+			else
+			{
+				// Hàng không tồn tại: Thông báo cho người dùng
+				console.log(`Lịch ID ${scheduleId} không có trên bảng lọc hiện tại.`);
+			}
+		});
+
+		// 3. Start to connect
+		connection.start()
+			.then(function(){
+				console.log("Kết nối SignalR thành công.");
+
+				// Access to group
+				connection.invoke("JoinScheduleUpdates").catch(function (err){
+					return console.error(err.toString());
+				});
+			})
+			.catch(function (err) {
+				console.error("Lỗi kết nối SignalR:", err.toString());
+			});
+	</script>
 }

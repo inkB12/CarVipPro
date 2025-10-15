@@ -62,5 +62,22 @@ namespace CarVipPro.DAL.Services
             await _context.SaveChangesAsync();
             return schedule;
         }
+
+        public async Task<DriveSchedule> UpdateAsync(DriveSchedule schedule)
+        {
+            _context.DriveSchedules.Update(schedule);
+            await _context.SaveChangesAsync();
+            return schedule;
+        }
+
+        public async Task<DriveSchedule?> GetDriveScheduleByIdAsync(int? id = 0)
+        {
+            return await _context.DriveSchedules
+                .Include(d => d.Customer)
+                .Include(d => d.ElectricVehicle)
+                .Include(d => d.Account)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(ds => ds.Id == id);
+        }
     }
 }
