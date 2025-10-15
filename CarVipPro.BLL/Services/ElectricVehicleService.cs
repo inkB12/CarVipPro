@@ -20,12 +20,12 @@ namespace CarVipPro.BLL.Services
         public async Task<List<ElectricVehicleDTO>> GetActiveByCompanyAsync(int companyId)
         {
             var vehicles = await _vehicleRepo.GetActiveByCompanyAsync(companyId);
-            return vehicles.Select(v => new ElectricVehicleDTO
+            return [.. vehicles.Select(v => new ElectricVehicleDTO
             {
                 Id = v.Id,
                 Model = v.Model,
                 Color = v.Color
-            }).ToList();
+            })];
         }
 
         public async Task<IEnumerable<ElectricVehicleDTO>> GetAll()
@@ -34,6 +34,8 @@ namespace CarVipPro.BLL.Services
 
             return vehicles.Select(v => new ElectricVehicleDTO
             {
+                Id = v.Id,
+                Model = v.Model,
                 Version = v.Version,
                 Price = v.Price,
                 Color = v.Color,
