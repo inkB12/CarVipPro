@@ -10,6 +10,6 @@ namespace CarVipPro.DAL.Services
         public CustomerRepository(CarVipProContext db) => _db = db;
 
         public Task<Customer?> GetByIdAsync(int id) =>
-            _db.Customers.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+            _db.Customers.FirstOrDefaultAsync(c => c.Id == id);
     }
 }

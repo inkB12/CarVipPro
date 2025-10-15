@@ -21,36 +21,6 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
         {
             Cart = HttpContext.Session.GetCart();
         }
-
-        //public IActionResult OnPostUpdate([FromForm] List<CartItem> Items)
-        //{
-        //    var cart = HttpContext.Session.GetCart();
-
-        //    foreach (var input in Items)
-        //    {
-        //        var it = cart.Items.FirstOrDefault(x => x.ElectricVehicleId == input.ElectricVehicleId);
-        //        if (it != null)
-        //        {
-        //            it.Quantity = Math.Max(1, input.Quantity);
-        //        }
-        //    }
-
-        //    HttpContext.Session.SaveCart(cart);
-        //    Cart = cart;
-        //    Info = "Đã cập nhật giỏ hàng.";
-        //    return Page();
-        //}
-
-        //public IActionResult OnPostRemove(int id)
-        //{
-        //    var cart = HttpContext.Session.GetCart();
-        //    cart.Items.RemoveAll(i => i.ElectricVehicleId == id);
-        //    HttpContext.Session.SaveCart(cart);
-
-        //    Cart = cart;
-        //    Info = "Đã xoá sản phẩm khỏi giỏ.";
-        //    return Page();
-        //}
         
         public async Task<IActionResult> OnPostCheckout(int CustomerId, string PaymentMethod)
         {
@@ -80,6 +50,8 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 TotalPrice = i.UnitPrice * i.Quantity
             }).ToList();
 
+            Console.WriteLine("CustomerId: "+CustomerId);
+            Console.WriteLine("PaymentMethod: "+PaymentMethod);
             var (ok, msg, order) = await _orderService.CreatePaidOrderAsync(
                 customerId: CustomerId,
                 staffAccountId: staffId.Value,
