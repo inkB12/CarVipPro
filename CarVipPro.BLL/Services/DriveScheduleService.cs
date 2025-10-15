@@ -44,6 +44,24 @@ namespace CarVipPro.BLL.Services
                 .ToList();
         }
 
+        // 📅 Lấy tất cả lịch trong ngày của xe (Dynamic Searching)
+        public async Task<List<DriveScheduleViewDto>> GetSchedulesByDateAsync(int vehicleId, DateTime date = default)
+        {
+            var schedules = await _driveRepo.GetSchedulesByDateAsync(vehicleId, date);
+
+            return [.. schedules
+                .Select(s => new DriveScheduleViewDto
+                {
+                    Id = s.Id,
+                    VehicleModel = s.ElectricVehicle?.Model ?? "N/A",
+                    CustomerName = s.Customer?.FullName ?? "N/A",
+                    StaffName = s.Account?.FullName ?? "N/A",
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Status = s.Status
+                })];
+        }
+
         // ➕ Tạo mới lịch lái thử
         public async Task<(bool Success, string Message, DriveScheduleViewDto? CreatedSchedule)> CreateAsync(DriveScheduleCreateDto dto)
         {

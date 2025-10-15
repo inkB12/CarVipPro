@@ -1,0 +1,144 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.DriveTest.SchedulesModel
+@{
+	ViewData["Title"] = "Danh sách lịch lái thử";
+	Layout = "_LayoutStaff";
+}
+
+<h2 class="text-xl font-semibold mb-4">🗓️ Lịch lái thử</h2>
+
+<form method="get" class="filter-form">
+	@* Choose Date *@
+	<label for="FilterDate">Chọn ngày:</label>
+	<input type="date" asp-for="FilterDate" class="form-control" />
+
+	@* Choose Car Model *@
+	<label for="VehicleId">Chọn xe:</label>
+	<select asp-for="VehicleId" class="form-control">
+		<option value="0">Tất cả xe</option>
+
+		@foreach (var vehicle in Model.Vehicles)
+		{
+			<option value="@vehicle.Id">@vehicle.Model</option>
+		}
+	</select>
+
+	<button type="submit" class="btn-primary">Lọc</button>
+</form>
+
+<hr style="margin: 20px 0;" />
+
+<table class="schedule-table">
+	<thead>
+		<tr>
+			<th>Thời gian</th>
+			<th>Khách hàng</th>
+			<th>Xe</th>
+			<th>Trạng thái</th>
+			<th>Hành động</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model.Schedules.Count > 0)
+		{
+			@foreach (var s in Model.Schedules)
+			{
+				<tr>
+					<td>
+						@s.StartTime.ToString("HH:mm") - @s.EndTime.ToString("HH:mm")
+						<br />
+						<small class="text-muted">(@s.StartTime.ToString("dd/MM/yyyy"))</small>
+					</td>
+					<td>@s.CustomerName</td>
+					<td>@s.VehicleModel</td>
+					<td>
+						<span class="status-badge @(s.Status?.ToLower())">@s.Status</span>
+					</td>
+					<td>
+						<a asp-page="/Staff/DriveTest/EditSchedule"
+						   asp-route-scheduleId="@s.Id"
+						   class="btn-edit">
+							✏️ Chỉnh sửa
+						</a>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="4" class="text-center">
+					Không có lịch lái thử nào được tìm thấy.
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@section Scripts {
+
+	<style>
+		/* Style chung cho bảng lịch lái thử */
+		.schedule-table {
+			width: 100%;
+			border-collapse: separate;
+			border-spacing: 0;
+			margin-top: 20px;
+			background: #fff;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			overflow: hidden;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+		}
+
+			.schedule-table th {
+				background-color: #f8f9fa; /* Màu nền header nhẹ nhàng */
+				color: #343a40;
+				padding: 12px 15px;
+				text-align: left;
+				font-weight: 600;
+			}
+
+			.schedule-table td {
+				padding: 12px 15px;
+				border-bottom: 1px solid #eee; /* Viền ngăn giữa các dòng */
+				vertical-align: middle;
+			}
+
+			.schedule-table tr:last-child td {
+				border-bottom: none;
+			}
+
+			.schedule-table tbody tr:hover td {
+				background-color: #f0f0f0; /* Hiệu ứng hover */
+				transition: background 0.2s ease;
+			}
+
+		/* Style cho form lọc */
+		.filter-form {
+			display: flex;
+			gap: 15px;
+			align-items: center;
+			padding: 15px;
+			border: 1px solid #e9ecef;
+			border-radius: 6px;
+			background-color: #f8f9fa;
+		}
+
+			.filter-form .form-control {
+				padding: 8px;
+				border: 1px solid #ced4da;
+				border-radius: 4px;
+			}
+
+			.filter-form .btn-primary {
+				background-color: #007bff;
+				color: white;
+				border: none;
+				padding: 8px 15px;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+	</style>
+
+}

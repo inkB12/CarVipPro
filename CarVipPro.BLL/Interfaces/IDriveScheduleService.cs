@@ -8,5 +8,6 @@ namespace CarVipPro.BLL.Interfaces
     {
         Task<List<DriveScheduleViewDto>> GetSchedulesByVehicleAndDateAsync(int vehicleId, DateTime date);
         Task<(bool Success, string Message, DriveScheduleViewDto? CreatedSchedule)> CreateAsync(DriveScheduleCreateDto dto);
+        Task<List<DriveScheduleViewDto>> GetSchedulesByDateAsync(int vehicleId, DateTime date = default);
     }
 }

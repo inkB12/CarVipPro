@@ -7,5 +7,6 @@ namespace CarVipPro.DAL.Interfaces
     {
         Task<List<DriveSchedule>> GetSchedulesByVehicleAndDateAsync(int vehicleId, DateTime date);
         Task<DriveSchedule> AddAsync(DriveSchedule schedule);
+        Task<List<DriveSchedule>> GetSchedulesByDateAsync(int vehicleId, DateTime date = default);
     }
 }

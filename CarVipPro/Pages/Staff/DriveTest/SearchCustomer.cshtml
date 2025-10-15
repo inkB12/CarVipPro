@@ -22,7 +22,7 @@
 <h2 class="text-xl font-semibold mb-4">🔍 Tìm kiếm khách hàng</h2>
 
 <div class="actions-bar" style="margin-bottom: 15px;">
-    <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">➕ Thêm khách hàng mới</a>
+    <a asp-page="/Staff/DriveTest/CreateCustomer" class="btn-add-new">➕ Thêm khách hàng mới</a>
 </div>
 
 <form method="get" class="search-form">
@@ -105,7 +105,7 @@ else if (!string.IsNullOrEmpty(Model.Keyword))
         <p>❌ Không tìm thấy khách hàng phù hợp.</p>
         <p>Bạn có muốn thêm mới khách hàng không?</p>
 
-        <a asp-page="/DriveTest/CreateCustomer" class="btn-add-new">
+        <a asp-page="/Staff/DriveTest/CreateCustomer" class="btn-add-new">
             ➕ Thêm khách hàng mới
         </a>
     </div>
