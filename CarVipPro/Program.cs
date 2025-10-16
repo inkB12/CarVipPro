@@ -1,4 +1,5 @@
 ﻿using CarVipPro.APrenstationLayer.Hubs;
+using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.BLL.Services;
 using CarVipPro.DAL;
@@ -17,6 +18,9 @@ namespace CarVipPro
             //Add context
             builder.Services.AddDbContext<CarVipProContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Kết nối Momo 
+            builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
 
             //DI
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -70,6 +74,7 @@ namespace CarVipPro
             builder.Services.AddScoped<ICarCompanyService, CarCompanyService>();
             builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IMomoService, MomoService>();
 
 
             // SignalR
