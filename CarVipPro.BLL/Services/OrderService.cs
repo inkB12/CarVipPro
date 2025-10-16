@@ -92,5 +92,20 @@ namespace CarVipPro.BLL.Services
 
             return (true, "Order created & paid", order);
         }
+
+        public async Task<(bool ok, string message, Order? data)> UpdateOrderStatusAsync(string orderStatus, int orderId)
+        {
+            var order = await _orders.GetByIdAsync(orderId);
+
+            if (order == null)
+            {
+                return (false, "No order found", null);
+            }
+
+            order.Status = orderStatus;
+
+            await _orders.UpdateAsync(order);
+            return (true, "Update Order Successfully", null);
+        }
     }
 }

@@ -3,13 +3,21 @@ using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
 {
     public class IndexModel : PageModel
     {
         private readonly IOrderService _orderService;
-        public IndexModel(IOrderService orderService) => _orderService = orderService;
+        private readonly IMomoService _momoService;
+
+        public IndexModel(IOrderService orderService, IMomoService momoService)
+        {
+            _orderService = orderService;
+            _momoService = momoService;
+        }
+
 
         public CartModel Cart { get; set; } = new();
         [BindProperty(SupportsGet = true)] public int CustomerId { get; set; }
@@ -21,7 +29,7 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
         {
             Cart = HttpContext.Session.GetCart();
         }
-        
+
         public async Task<IActionResult> OnPostCheckout(int CustomerId, string PaymentMethod)
         {
             var staffId = HttpContext.Session.GetInt32(SessionKeys.UserId);
@@ -50,8 +58,8 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 TotalPrice = i.UnitPrice * i.Quantity
             }).ToList();
 
-            Console.WriteLine("CustomerId: "+CustomerId);
-            Console.WriteLine("PaymentMethod: "+PaymentMethod);
+            Console.WriteLine("CustomerId: " + CustomerId);
+            Console.WriteLine("PaymentMethod: " + PaymentMethod);
             var (ok, msg, order) = await _orderService.CreatePaidOrderAsync(
                 customerId: CustomerId,
                 staffAccountId: staffId.Value,
@@ -64,6 +72,17 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 Error = msg;
                 Cart = cart;
                 return Page();
+            }
+
+            if (order.PaymentMethod.Equals("MOMO"))
+            {
+                // Create Payment Url
+                var momoResponse = await _momoService.CreatePaymentAsync(order.Id, order.Total);
+
+                if (momoResponse != null && !momoResponse.PayUrl.IsNullOrEmpty())
+                {
+                    return Redirect(momoResponse.PayUrl);
+                }
             }
 
             //thanh toán thành công

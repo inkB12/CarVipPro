@@ -1,16 +1,21 @@
-﻿using CarVipPro.APrenstationLayer.Infrastructure;
+﻿using System.ComponentModel.DataAnnotations;
+using CarVipPro.APrenstationLayer.Infrastructure;
 using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.Tokens;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CarVipPro.APrenstationLayer.Pages.Staff.Order
 {
     public class CreateModel : PageModel
     {
         private readonly IOrderService _orderService;
-        public CreateModel(IOrderService orderService) => _orderService = orderService;
+        public CreateModel(IOrderService orderService, IMomoService momoService)
+        {
+            _orderService = orderService;
+        }
 
         [BindProperty] public InputModel Input { get; set; } = new();
         public string? Error { get; set; }
@@ -72,9 +77,6 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Order
                 Error = msg;
                 return Page();
             }
-
-            OrderId = order.Id;
-            OrderTotal = order.Total;
 
             // reset form
             ModelState.Clear();
