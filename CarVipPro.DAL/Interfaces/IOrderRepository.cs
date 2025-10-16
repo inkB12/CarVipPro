@@ -9,5 +9,7 @@ namespace CarVipPro.DAL.Interfaces
         Task<Order?> GetByIdAsync(int id);
         Task UpdateAsync(Order order);
         Task<int> SaveChangesAsync();
+        Task<List<Order>> SearchAsync(string? q, string? status);
+        Task<Order?> GetWithDetailsAsync(int id);
     }
 }

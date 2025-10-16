@@ -3,6 +3,7 @@
 @using CarVipPro.APrenstationLayer.Infrastructure
 @{
     ViewData["Title"] = "Giỏ hàng";
+    Layout = "_Layout";
     var channel = CartChannel.EnsureChannel(HttpContext.Session);
 }
 

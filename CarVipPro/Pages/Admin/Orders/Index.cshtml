@@ -1,0 +1,112 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Staff.Orders.IndexModel
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-light">
+            <i class="bi bi-receipt text-warning"></i> Danh sách Đơn hàng
+        </h2>
+        <div>
+            <!-- chừa chỗ cho action tương lai (export, refresh...) -->
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4" style="background-color:#1e293b;">
+        <div class="card-body">
+            <!-- Filters -->
+            <form method="get" class="row g-2 mb-4">
+                <div class="col-lg-4">
+                    <input name="q" value="@Model.Q" class="form-control text-light"
+                           placeholder="Tìm theo tên khách / email / OrderId..."
+                           style="background-color:#0b1220;border-color:#334155;" />
+                </div>
+                <div class="col-lg-3">
+                    <select name="status" class="form-select text-light"
+                            style="background-color:#0b1220;border-color:#334155;">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="PENDING" selected="@(Model.Status == "PENDING")">PENDING</option>
+                        <option value="COMPLETED" selected="@(Model.Status == "COMPLETED")">COMPLETED</option>
+                        <option value="CANCELED" selected="@(Model.Status == "CANCELED")">CANCELED</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 d-flex gap-2">
+                    <button class="btn btn-gradient px-4 shadow-sm" type="submit">
+                        <i class="bi bi-funnel me-1"></i> Lọc
+                    </button>
+                    <a class="btn btn-outline-light px-4" href="/Admin/Orders/Index">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa lọc
+                    </a>
+                </div>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>@Model.Error
+                </div>
+            }
+
+            @if (Model.Items.Count == 0)
+            {
+                <div class="text-center py-5 text-secondary">
+                    <div class="mb-2"><i class="bi bi-inbox-fill fs-2"></i></div>
+                    Chưa có đơn hàng.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead style="background-color:#1e3a8a;">
+                            <tr class="text-center">
+                                <th style="width:90px" class="text-start">Order</th>
+                                <th class="text-start">Khách hàng</th>
+                                <th class="text-start">Email</th>
+                                <th class="text-start">Thời gian</th>
+                                <th class="text-end">Tổng (₫)</th>
+                                <th class="text-center">Thanh toán</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th style="width:120px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var it in Model.Items)
+                            {
+                                var status = (it.Status ?? string.Empty).ToUpperInvariant();
+                                var badgeClass = status switch
+                                {
+                                    "COMPLETED" => "bg-success",
+                                    "PENDING" => "bg-warning text-dark",
+                                    "CANCELED" => "bg-danger",
+                                    _ => "bg-secondary"
+                                };
+                                <tr class="animate__animated animate__fadeInUp">
+                                    <td class="fw-semibold text-start">#@it.Id</td>
+                                    <td class="text-start text-light">@it.CustomerName</td>
+                                    <td class="text-start text-secondary small">@it.CustomerEmail</td>
+                                    <td class="text-start text-light">@it.DateTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="text-end text-info fw-semibold">@it.Total.ToString("N0")</td>
+                                    <td class="text-center">@it.PaymentMethod</td>
+                                    <td class="text-center">
+                                        <span class="badge @badgeClass px-3 py-2">@status</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-light" asp-page="/Admin/Orders/Details" asp-route-id="@it.Id">
+                                            <i class="bi bi-eye me-1"></i> Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -43,11 +43,18 @@
                         @if (isAuth)
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Staff/DriveTest/SearchCustomer">Lái thử</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Staff/Vehicles/Index">Tìm xe</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Staff/Cart">Cart</a>
+                                <a class="nav-link text-dark" href="/Staff/Cart">Đặt xe</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Staff/Orders/Index">Orders</a>
                             </li>
 
                             <li class="nav-item me-2 d-flex align-items-center">

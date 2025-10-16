@@ -1,0 +1,127 @@
+﻿@page
+@model CarVipPro.APrenstationLayer.Pages.Admin.Accounts.IndexModel
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+    Layout = "_LayoutAdmin";
+}
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-light">
+            <i class="bi bi-people text-warning"></i> Danh sách Tài khoản
+        </h2>
+        <a asp-page="Create" class="btn btn-gradient px-4 py-2 shadow-sm">
+            <i class="bi bi-person-plus me-2"></i> Tạo tài khoản
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4" style="background-color:#1e293b;">
+        <div class="card-body">
+            <form method="get" class="row g-2 mb-4">
+                <div class="col-lg-4">
+                    <input name="q" value="@Model.Q" class="form-control text-light"
+                           placeholder="Tìm theo tên / email / phone"
+                           style="background-color:#0b1220;border-color:#334155;" />
+                </div>
+                <div class="col-lg-3">
+                    <select name="role" class="form-select text-light"
+                            style="background-color:#0b1220;border-color:#334155;">
+                        <option value="">Tất cả role</option>
+                        <option value="Manager" selected="@(Model.Role == "Manager")">Manager</option>
+                        <option value="Staff" selected="@(Model.Role == "Staff")">Staff</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 d-flex align-items-center gap-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="onlyActive" value="true" @(Model.OnlyActive ? "checked" : "") id="chkActive" />
+                        <label class="form-check-label" for="chkActive">Chỉ hiển thị Active</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 d-flex gap-2">
+                    <button class="btn btn-gradient px-4 shadow-sm" type="submit">
+                        <i class="bi bi-funnel me-1"></i> Lọc
+                    </button>
+                    <a class="btn btn-outline-light px-4" asp-page="Index">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Xóa lọc
+                    </a>
+                </div>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>@Model.Error
+                </div>
+            }
+
+            @if (Model.Items.Count == 0)
+            {
+                <div class="text-center py-5 text-secondary">
+                    <div class="mb-2"><i class="bi bi-inbox-fill fs-2"></i></div>
+                    Không có tài khoản nào.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead style="background:rgba(99,102,241,0.2);color:#c7d2fe;">
+                            <tr>
+                                <th style="width:80px">ID</th>
+                                <th>Email</th>
+                                <th>Họ tên</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end" style="width:180px">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.Items)
+                            {
+                                <tr class="animate__animated animate__fadeInUp">
+                                    <td class="fw-semibold">#@a.Id</td>
+                                    <td class="text-light">@a.Email</td>
+                                    <td>@a.FullName</td>
+                                    <td class="text-secondary">@a.Phone</td>
+                                    <td>
+                                        @if (a.Role == "Manager")
+                                        {
+                                            <span class="badge bg-info">Manager</span>
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-secondary">Staff</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (a.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-light me-1" asp-page="Edit" asp-route-id="@a.Id">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-outline-warning me-1" asp-page="Details" asp-route-id="@a.Id">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-danger" asp-page="Delete" asp-route-id="@a.Id">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

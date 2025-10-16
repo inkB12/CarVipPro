@@ -33,6 +33,34 @@ namespace CarVipPro.DAL.Services
             await _db.SaveChangesAsync();
         }
 
+        public async Task<List<Order>> SearchAsync(string? q, string? status)
+        {
+            var query = _db.Orders
+            .AsNoTracking()
+            .Include(o => o.Customer)
+            .OrderByDescending(o => o.DateTime)
+            .AsQueryable();
+
+
+            if (!string.IsNullOrWhiteSpace(status)) query = query.Where(o => o.Status == status);
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var k = q.Trim();
+                query = query.Where(o => o.Id.ToString().Contains(k) || o.Customer.FullName.Contains(k) || o.Customer.Email.Contains(k));
+            }
+            return await query.ToListAsync();
+        }
+
+        public async Task<Order?> GetWithDetailsAsync(int id)
+        {
+            return await _db.Orders
+            .AsNoTracking()
+            .Include(o => o.Customer)
+            .Include(o => o.OrderDetails).ThenInclude(od => od.ElectricVehicle).ThenInclude(ev => ev.CarCompany)
+            .Include(o => o.OrderDetails).ThenInclude(od => od.ElectricVehicle).ThenInclude(ev => ev.Category)
+            .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
         public Task<int> SaveChangesAsync() => _db.SaveChangesAsync();
     }
 }

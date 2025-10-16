@@ -161,9 +161,12 @@
         <h4 class="text-center mb-4">⚡ CarVipPro</h4>
         <nav class="nav flex-column">
             <a class="nav-link @(ViewData["Title"] == "Bảng điều khiển quản trị" ? "active" : "")" asp-page="/Admin/Index"><i class="bx bx-home"></i> Dashboard</a>
+            <a class="nav-link" asp-page="/Admin/Account/Index"><i class="bx bx-user"></i> Staff Account</a>
             <a class="nav-link" asp-page="/Admin/CarCompany/Index"><i class="bx bx-building"></i> Hãng xe</a>
             <a class="nav-link" asp-page="/Admin/ElectricVehicle/Index"><i class="bx bx-bolt-circle"></i> Xe điện</a>
             <a class="nav-link" asp-page="/Admin/VehicleCategory/Index"><i class="bx bx-category"></i> Loại xe</a>
+            <a class="nav-link" asp-page="/Admin/Orders/Index"><i class="bx bx-shopping-bag"></i> Orders</a>
+
         </nav>
     </div>
 

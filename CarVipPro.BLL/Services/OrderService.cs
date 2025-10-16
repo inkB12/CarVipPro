@@ -107,5 +107,51 @@ namespace CarVipPro.BLL.Services
             await _orders.UpdateAsync(order);
             return (true, "Update Order Successfully", null);
         }
+
+        public async Task<List<OrderListItemDto>> GetOrdersAsync(string? q, string? status)
+        {
+            var list = await _orders.SearchAsync(q, status);
+            return list.Select(o => new OrderListItemDto
+            {
+                Id = o.Id,
+                CustomerName = o.Customer.FullName,
+                CustomerEmail = o.Customer.Email,
+                DateTime = o.DateTime,
+                Total = o.Total,
+                PaymentMethod = o.PaymentMethod,
+                Status = o.Status
+            }).ToList();
+        }
+
+
+        public async Task<OrderDto?> GetOrderAsync(int id)
+        {
+            var o = await _orders.GetWithDetailsAsync(id);
+            if (o == null) return null;
+
+
+            return new OrderDto
+            {
+                Id = o.Id,
+                CustomerName = o.Customer.FullName,
+                CustomerEmail = o.Customer.Email,
+                CustomerPhone = o.Customer.Phone,
+                DateTime = o.DateTime,
+                PaymentMethod = o.PaymentMethod,
+                Status = o.Status,
+                Total = o.Total,
+                Details = o.OrderDetails.Select(od => new OrderDetailItemDto
+                {
+                    VehicleModel = od.ElectricVehicle.Model,
+                    CompanyName = od.ElectricVehicle.CarCompany.CatalogName,
+                    CategoryName = od.ElectricVehicle.Category.CategoryName,
+                    Color = od.ElectricVehicle.Color,
+                    Quantity = od.Quantity,
+                    TotalPrice = od.TotalPrice,
+                    UnitPriceEstimated = od.Quantity > 0 ? Math.Round(od.TotalPrice / od.Quantity, 0) : 0
+                }).ToList()
+            };
+        }
+
     }
 }

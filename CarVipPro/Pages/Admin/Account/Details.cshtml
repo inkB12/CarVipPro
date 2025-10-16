@@ -1,0 +1,52 @@
+﻿@page "{id:int}"
+@model CarVipPro.APrenstationLayer.Pages.Admin.Accounts.DetailsModel
+@{
+    ViewData["Title"] = "Chi tiết tài khoản";
+    Layout = "_LayoutAdmin";
+}
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-light">
+            <i class="bi bi-person-badge text-warning"></i> Chi tiết tài khoản
+        </h2>
+        <a asp-page="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left-short"></i> Quay lại</a>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4" style="background-color:#1e293b;">
+        <div class="card-body">
+            @if (Model.Item == null)
+            {
+                <div class="alert alert-warning"><i class="bi bi-info-circle"></i> Không tìm thấy tài khoản.</div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="text-secondary small">ID</div>
+                        <div class="fw-semibold">#@Model.Item.Id</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-secondary small">Email</div>
+                        <div>@Model.Item.Email</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-secondary small">Họ tên</div>
+                        <div>@Model.Item.FullName</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-secondary small">Phone</div>
+                        <div>@Model.Item.Phone</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-secondary small">Role</div>
+                        <div>@Model.Item.Role</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-secondary small">Trạng thái</div>
+                        <div>@(Model.Item.IsActive ? "Active" : "Inactive")</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

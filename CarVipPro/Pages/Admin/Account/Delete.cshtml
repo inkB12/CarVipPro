@@ -1,0 +1,39 @@
+﻿@page "{id:int}"
+@model CarVipPro.APrenstationLayer.Pages.Admin.Accounts.DeleteModel
+@{
+    ViewData["Title"] = "Xóa tài khoản";
+    Layout = "_LayoutAdmin";
+}
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-light">
+            <i class="bi bi-person-dash text-danger"></i> Xóa tài khoản
+        </h2>
+        <a asp-page="Index" class="btn btn-outline-light"><i class="bi bi-arrow-left-short"></i> Quay lại</a>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4" style="background-color:#1e293b;">
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-danger">@Model.Error</div>
+            }
+
+            @if (Model.Item == null)
+            {
+                <div class="alert alert-warning"><i class="bi bi-info-circle"></i> Không tìm thấy tài khoản.</div>
+            }
+            else
+            {
+                <p>Bạn có chắc muốn xóa tài khoản: <strong>@Model.Item.Email</strong> (ID: @Model.Item.Id)?</p>
+                <form method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Xóa
+                    </button>
+                    <a asp-page="Index" class="btn btn-outline-light ms-2">Hủy</a>
+                </form>
+            }
+        </div>
+    </div>
+</div>
