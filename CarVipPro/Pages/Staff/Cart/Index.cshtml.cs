@@ -1,6 +1,7 @@
 ﻿using CarVipPro.APrenstationLayer.Infrastructure;
 using CarVipPro.BLL.Dtos;
 using CarVipPro.BLL.Interfaces;
+using CarVipPro.DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
@@ -11,13 +12,14 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
     {
         private readonly IOrderService _orderService;
         private readonly IMomoService _momoService;
+        private readonly ICustomerService _customers; // <-- thêm service khách hàng
 
-        public IndexModel(IOrderService orderService, IMomoService momoService)
+        public IndexModel(IOrderService orderService, IMomoService momoService, ICustomerService customers)
         {
             _orderService = orderService;
             _momoService = momoService;
+            _customers = customers;
         }
-
 
         public CartModel Cart { get; set; } = new();
         [BindProperty(SupportsGet = true)] public int CustomerId { get; set; }
@@ -29,6 +31,29 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
         {
             Cart = HttpContext.Session.GetCart();
         }
+
+        // ---------- AJAX: search customer by name/email/phone ----------
+        // GET /Staff/Cart/Index?handler=CustomerSearch&q=...
+        public async Task<IActionResult> OnGetCustomerSearchAsync(string? q)
+        {
+            q = (q ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+                return new JsonResult(Array.Empty<object>());
+
+            // Yêu cầu ICustomerService có hàm SearchAsync(q)
+            // Trả về list entity/DTO; ở đây map về dạng nhẹ cho UI
+            var list = await _customers.SearchAsync(q);
+            var result = list.Select(c => new
+            {
+                id = c.Id,
+                fullName = c.FullName,
+                email = c.Email,
+                phone = c.Phone
+            }).ToList();
+
+            return new JsonResult(result);
+        }
+        // ---------------------------------------------------------------
 
         public async Task<IActionResult> OnPostCheckout(int CustomerId, string PaymentMethod)
         {
@@ -51,6 +76,13 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 return Page();
             }
 
+            if (CustomerId <= 0)
+            {
+                Error = "Vui lòng chọn khách hàng từ ô tìm kiếm (tối thiểu 2 ký tự để tìm).";
+                Cart = cart;
+                return Page();
+            }
+
             var items = cart.Items.Select(i => new OrderItemDto
             {
                 ElectricVehicleId = i.ElectricVehicleId,
@@ -58,8 +90,6 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 TotalPrice = i.UnitPrice * i.Quantity
             }).ToList();
 
-            Console.WriteLine("CustomerId: " + CustomerId);
-            Console.WriteLine("PaymentMethod: " + PaymentMethod);
             var (ok, msg, order) = await _orderService.CreatePaidOrderAsync(
                 customerId: CustomerId,
                 staffAccountId: staffId.Value,
@@ -85,10 +115,10 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 }
             }
 
-            //thanh toán thành công
+            // thanh toán thành công
             HttpContext.Session.ClearCart();
             Info = $"Thanh toán thành công. OrderId = {order.Id}, Tổng = {order.Total:n0}";
-            Cart = new CartModel();// clear
+            Cart = new CartModel(); // clear
             return Page();
         }
     }
