@@ -39,6 +39,7 @@ namespace CarVipPro
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IElectricVehicleRepository, ElectricVehicleRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
 
             builder.Services.AddRazorPages()
             .AddViewOptions(options =>

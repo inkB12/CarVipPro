@@ -1,0 +1,9 @@
+﻿
+namespace CarVipPro.BLL.Dtos
+{
+    public class YearlyRevenueDto
+    {
+        public int Year { get; set; }
+        public decimal Revenue { get; set; }
+    }
+}

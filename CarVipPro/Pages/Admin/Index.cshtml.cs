@@ -1,4 +1,5 @@
-﻿using CarVipPro.BLL.Interfaces;
+﻿using CarVipPro.BLL.Dtos;
+using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,33 +7,25 @@ namespace CarVipPro.APrenstationLayer.Pages.Admin
 {
     public class IndexModel : PageModel
     {
-        private readonly ICarCompanyService _carCompanyService;
-        private readonly IElectricVehicleService _electricVehicleService;
-        private readonly IVehicleCategoryService _vehicleCategoryService;
+        private readonly IDashboardService _dashboardService;
 
-        public int TotalCompanies { get; set; }
-        public int TotalVehicles { get; set; }
-        public int TotalCategories { get; set; }
+        public DashboardSummaryDto Summary { get; set; } = new();
+        public List<YearlyRevenueDto> YearlyRevenues { get; set; } = new(); // ✅ thêm
+        public int SelectedYear { get; set; }
+        public int? SelectedMonth { get; set; }
 
-        public IndexModel(
-            ICarCompanyService carCompanyService,
-            IElectricVehicleService electricVehicleService,
-            IVehicleCategoryService vehicleCategoryService)
+        public IndexModel(IDashboardService dashboardService)
         {
-            _carCompanyService = carCompanyService;
-            _electricVehicleService = electricVehicleService;
-            _vehicleCategoryService = vehicleCategoryService;
+            _dashboardService = dashboardService;
         }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? year, int? month)
         {
-            var companies = await _carCompanyService.GetAll();
-            var vehicles = await _electricVehicleService.GetAll();
-            var categories = await _vehicleCategoryService.GetAll();
+            SelectedYear = year ?? DateTime.Now.Year;
+            SelectedMonth = month;
 
-            TotalCompanies = companies.Count();
-            TotalVehicles = vehicles.Count();
-            TotalCategories = categories.Count();
+            Summary = await _dashboardService.GetSummaryAsync(SelectedYear, SelectedMonth);
+            YearlyRevenues = await _dashboardService.GetYearlyRevenueAsync(); // ✅ thêm
         }
     }
 }

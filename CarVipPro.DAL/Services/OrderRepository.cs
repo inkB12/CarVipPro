@@ -62,5 +62,19 @@ namespace CarVipPro.DAL.Services
         }
 
         public Task<int> SaveChangesAsync() => _db.SaveChangesAsync();
+        public async Task<List<Order>> GetAllWithDetailsAsync()
+        {
+            return await _db.Orders
+                .AsNoTracking()
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.ElectricVehicle)
+                        .ThenInclude(ev => ev.CarCompany)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.ElectricVehicle)
+                        .ThenInclude(ev => ev.Category)
+                .OrderByDescending(o => o.DateTime)
+                .ToListAsync();
+        }
     }
 }
