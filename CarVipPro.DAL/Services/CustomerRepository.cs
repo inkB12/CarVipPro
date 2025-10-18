@@ -52,5 +52,14 @@ namespace CarVipPro.DAL.Services
         }
         public Task<Customer?> GetByIdAsync(int id) =>
             _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+
+        public async Task<List<Customer>> GetAllAsync()
+        {
+            return await _context.Customers
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+
     }
 }

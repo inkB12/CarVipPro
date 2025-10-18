@@ -34,7 +34,7 @@ namespace CarVipPro.BLL.Services
             var vehicles = await _vehicleRepo.GetAllAsync();
             var companies = await _companyRepo.GetAllAsync();
             var categories = await _categoryRepo.GetAllAsync();
-            var customers = await _customerRepo.SearchAsync(""); // đếm khách hàng hiện có
+            var customers = await _customerRepo.GetAllAsync(); // ✅ thay vì SearchAsync("")
             var orders = await _orderRepo.GetAllWithDetailsAsync(); // ✅ dùng hàm mới
 
             // Lọc theo năm & tháng
