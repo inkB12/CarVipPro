@@ -118,8 +118,18 @@ namespace CarVipPro.BLL.Services
             }
 
             // 6️⃣ Trả lại dữ liệu để Presentation broadcast SignalR
+            var resultDto = new DriveScheduleViewDto
+            {
+                Id = schedule.Id,
+                VehicleModel = schedule.ElectricVehicle?.Model ?? string.Empty,
+                CustomerName = customer?.FullName ?? string.Empty,
+                StaffName = staff?.FullName ?? string.Empty,
+                StartTime = schedule.StartTime,
+                EndTime = schedule.EndTime,
+                Status = schedule.Status
+            };
 
-            return (true, "Đặt lịch lái thử thành công!", MapToDTO(schedule));
+            return (true, "Đặt lịch lái thử thành công!", resultDto);
         }
 
         public async Task<(bool Success, string Message, DriveScheduleViewDto? UpdatedSchedule)> UpdateSchedule(DriveScheduleCreateDto dto, int? driveScheduleId = 0)
@@ -150,7 +160,9 @@ namespace CarVipPro.BLL.Services
 
             await _driveRepo.UpdateAsync(entity);
 
-            return (true, "Đặt lịch lái thử thành công!", MapToDTO(entity));
+            DriveScheduleViewDto createdDTO = MapToDTO(entity);
+
+            return (true, "Đặt lịch lái thử thành công!", createdDTO);
         }
 
         private DriveScheduleViewDto MapToDTO(DriveSchedule schedule)

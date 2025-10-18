@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 
-namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
+namespace CarVipPro.APrenstationLayer.Pages.Admin.DriveTest
 {
     public class EditScheduleModel : PageModel
     {
@@ -33,7 +33,7 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
         {
             string? role = HttpContext.Session.GetString(SessionKeys.Role);
 
-            MainLayout = "_Layout";
+            MainLayout = "_LayoutStaff";
 
             if (role.Equals("Manager", StringComparison.OrdinalIgnoreCase))
             {

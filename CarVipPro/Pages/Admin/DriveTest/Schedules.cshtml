@@ -1,5 +1,5 @@
 ﻿@page
-@model CarVipPro.APrenstationLayer.Pages.Staff.DriveTest.SchedulesModel
+@model CarVipPro.APrenstationLayer.Pages.Admin.DriveTest.SchedulesModel
 @{
 	ViewData["Title"] = "Danh sách lịch lái thử";
 	Layout = Model.MainLayout == null ? "_Layout" : Model.MainLayout;
@@ -25,12 +25,6 @@
 
 	<button type="submit" class="btn-primary">Lọc</button>
 </form>
-
-<div class="actions-bar" style="margin-bottom: 15px;">
-	<a asp-page="/Staff/DriveTest/SearchCustomer" class="btn-back">
-		&larr; Quay lại trang tìm kiếm
-	</a>
-</div>
 
 <hr style="margin: 20px 0;" />
 
@@ -61,7 +55,7 @@
 						<span class="status-badge @(s.Status?.ToLower())">@s.Status</span>
 					</td>
 					<td>
-						<a asp-page="/Staff/DriveTest/EditSchedule"
+						<a asp-page="/Admin/DriveTest/EditSchedule"
 						   asp-route-scheduleId="@s.Id"
 						   class="btn-edit">
 							✏️ Chỉnh sửa
@@ -85,21 +79,22 @@
 
 	<style>
 		/* Style chung cho bảng lịch lái thử */
+		/* Style chung cho bảng lịch lái thử */
 		.schedule-table {
 			width: 100%;
 			border-collapse: separate;
 			border-spacing: 0;
 			margin-top: 20px;
-			background: #fff;
-			border: 1px solid #ddd;
+			background: var(--bg-card); /* ⬅️ Sử dụng màu nền tối */
+			border: 1px solid #334155; /* Viền tối hơn */
 			border-radius: 8px;
 			overflow: hidden;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 		}
 
 			.schedule-table th {
-				background-color: #f8f9fa; /* Màu nền header nhẹ nhàng */
-				color: #343a40;
+				background-color: rgba(99, 102, 241, 0.2); /* Màu nền header khớp với _LayoutAdmin */
+				color: #c7d2fe; /* Màu chữ header khớp với _LayoutAdmin */
 				padding: 12px 15px;
 				text-align: left;
 				font-weight: 600;
@@ -107,16 +102,12 @@
 
 			.schedule-table td {
 				padding: 12px 15px;
-				border-bottom: 1px solid #eee; /* Viền ngăn giữa các dòng */
+				border-bottom: 1px solid #334155; /* Viền tối hơn */
 				vertical-align: middle;
 			}
 
-			.schedule-table tr:last-child td {
-				border-bottom: none;
-			}
-
 			.schedule-table tbody tr:hover td {
-				background-color: #f0f0f0; /* Hiệu ứng hover */
+				background-color: rgba(255, 255, 255, 0.05); /* Hiệu ứng hover khớp với _LayoutAdmin */
 				transition: background 0.2s ease;
 			}
 
@@ -126,9 +117,9 @@
 			gap: 15px;
 			align-items: center;
 			padding: 15px;
-			border: 1px solid #e9ecef;
+			border: 1px solid #334155; /* Viền tối hơn */
 			border-radius: 6px;
-			background-color: #f8f9fa;
+			background-color: var(--bg-card); /* ⬅️ Sử dụng màu nền tối */
 		}
 
 			.filter-form .form-control {
@@ -164,7 +155,7 @@
 
 			const oldRow = document.getElementById(`schedule-${scheduleId}`)
 
-			const partialUrl = `/Staff/DriveTest/Schedules?handler=ScheduleRowPartial&scheduleId=${scheduleId}`;
+			const partialUrl = `/Admin/DriveTest/Schedules?handler=ScheduleRowPartial&scheduleId=${scheduleId}`;
 
 			if (oldRow){
 				fetch(partialUrl)
