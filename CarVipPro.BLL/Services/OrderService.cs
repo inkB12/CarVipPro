@@ -2,6 +2,7 @@
 using CarVipPro.BLL.Interfaces;
 using CarVipPro.DAL.Entities;
 using CarVipPro.DAL.Interfaces;
+using CarVipPro.DAL.Services;
 
 namespace CarVipPro.BLL.Services
 {
@@ -123,7 +124,13 @@ namespace CarVipPro.BLL.Services
             }).ToList();
         }
 
-
+        public async Task<Dictionary<int, int>> GetMonthlyOrderCountAsync()
+        {
+            var allOrders = await _orders.SearchAsync(null, "COMPLETED");
+            return allOrders
+                .GroupBy(o => o.DateTime.Month)
+                .ToDictionary(g => g.Key, g => g.Count());
+        }
         public async Task<OrderDto?> GetOrderAsync(int id)
         {
             var o = await _orders.GetWithDetailsAsync(id);
