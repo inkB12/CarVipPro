@@ -36,7 +36,7 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
         {
             string? role = HttpContext.Session.GetString(SessionKeys.Role);
 
-            MainLayout = "_LayoutStaff";
+            MainLayout = "_Layout";
 
             if (role.Equals("Manager", StringComparison.OrdinalIgnoreCase))
             {
