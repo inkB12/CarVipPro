@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
     <Folder Include="Hubs\" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>
