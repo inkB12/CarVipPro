@@ -85,10 +85,32 @@
 <form method="post" asp-page-handler="Checkout" id="checkoutForm">
     <h5>Thanh toán</h5>
     <div class="row g-3">
-        <div class="col-md-3">
-            <label class="form-label">Customer ID</label>
-            <input class="form-control" name="CustomerId" value="@Model.CustomerId" />
+        <div class="col-md-6 position-relative">
+            <label class="form-label">Khách hàng</label>
+
+            <!-- Hidden ID được submit -->
+            <input type="hidden" name="CustomerId" id="customerId" value="@Model.CustomerId" />
+
+            <!-- Ô tìm kiếm khách hàng -->
+            <input type="text"
+                   class="form-control"
+                   id="customerSearch"
+                   placeholder="Nhập tên / email / số điện thoại để tìm..."
+                   autocomplete="off" />
+
+            <!-- Hiển thị khách hàng đã chọn -->
+            <div id="customerPicked" class="mt-2" style="display:none">
+                <span class="badge bg-success me-2" id="customerPickedName"></span>
+                <span class="text-muted small" id="customerPickedInfo"></span>
+                <button type="button" class="btn btn-sm btn-link text-danger ms-2" id="clearPicked">Đổi khách</button>
+            </div>
+
+            <!-- Dropdown kết quả -->
+            <div id="customerResults"
+                 class="list-group position-absolute w-100"
+                 style="z-index:1050; max-height:300px; overflow:auto; display:none"></div>
         </div>
+
         <div class="col-md-3">
             <label class="form-label">Payment</label>
             <select class="form-select" name="PaymentMethod">
@@ -99,18 +121,100 @@
         </div>
     </div>
 
-    <div class="mt-3">
-        <button class="btn btn-success" type="submit">Thanh toán</button>
-    </div>
-</form>
+    
+    <div class="mt-3 d-flex gap-2">
 
+        <a class="btn btn-outline-primary" asp-page="/Staff/Cart/CreateCustomer">Tạo mới</a>
+        <button class="btn btn-success" type="submit">Thanh toán</button>
+        
+    </div>
+    
+</form>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
     <script>
         const channel = '@channel';
         console.log("Current SignalR channel:", channel);
     </script>
+
+    <script>
+        // ---------- Customer search ----------
+        (function(){
+            const searchBox = document.getElementById('customerSearch');
+            const resultsBox = document.getElementById('customerResults');
+            const pickedWrap = document.getElementById('customerPicked');
+            const pickedName = document.getElementById('customerPickedName');
+            const pickedInfo = document.getElementById('customerPickedInfo');
+            const clearPicked = document.getElementById('clearPicked');
+            const hiddenId = document.getElementById('customerId');
+
+            let debounceTimer = null;
+
+            function hideResults(){ resultsBox.style.display = 'none'; resultsBox.innerHTML = ''; }
+            function showResults(){ resultsBox.style.display = 'block'; }
+
+            async function search(q){
+                if(!q || q.trim().length < 2){ hideResults(); return; }
+                const url = `@Url.Page("/Staff/Cart/Index", null, new { handler = "CustomerSearch" })&q=` + encodeURIComponent(q);
+                const res = await fetch(url, { method: 'GET' });
+                if(!res.ok){ hideResults(); return; }
+                const data = await res.json();
+                renderResults(data);
+            }
+
+            function renderResults(list){
+                resultsBox.innerHTML = '';
+                if(!Array.isArray(list) || list.length === 0){ hideResults(); return; }
+
+                list.forEach(c => {
+                    const a = document.createElement('button');
+                    a.type = 'button';
+                    a.className = 'list-group-item list-group-item-action';
+                    a.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <div><strong>${escapeHtml(c.fullName ?? '(No name)')}</strong></div>
+                            <div class="text-muted small">#${c.id}</div>
+                        </div>
+                        <div class="small text-muted">${escapeHtml(c.email ?? '')} • ${escapeHtml(c.phone ?? '')}</div>
+                    `;
+                    a.addEventListener('click', () => pickCustomer(c));
+                    resultsBox.appendChild(a);
+                });
+                showResults();
+            }
+
+            function pickCustomer(c){
+                hiddenId.value = c.id;
+                pickedName.textContent = c.fullName ?? '(No name)';
+                pickedInfo.textContent = `${c.email ?? ''} • ${c.phone ?? ''}`;
+                pickedWrap.style.display = '';
+                searchBox.value = '';
+                hideResults();
+            }
+
+            clearPicked.addEventListener('click', () => {
+                hiddenId.value = '';
+                pickedWrap.style.display = 'none';
+            });
+
+            searchBox.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => search(e.target.value), 250);
+            });
+
+            document.addEventListener('click', (e) => {
+                if(!resultsBox.contains(e.target) && e.target !== searchBox){
+                    hideResults();
+                }
+            });
+
+            function escapeHtml(str){ return (str ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+        })();
+        // ---------- End Customer search ----------
+    </script>
+
     <script>
         (async function () {
             const channel = "@channel";
@@ -222,4 +326,3 @@
         </td>
     </tr>
 </template>
-
