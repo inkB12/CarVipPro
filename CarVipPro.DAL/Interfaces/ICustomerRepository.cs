@@ -9,5 +9,7 @@ namespace CarVipPro.DAL.Interfaces
         Task<Customer?> GetByIdWithDriveSchedulesAsync(int id);
         Task<Customer> AddAsync(Customer customer);
         Task<Customer?> GetByIdAsync(int id);
+        Task<List<Customer>> GetAllAsync();
+
     }
 }
