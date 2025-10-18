@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 
-namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
+namespace CarVipPro.APrenstationLayer.Pages.Admin.DriveTest
 {
     public class EditScheduleModel : PageModel
     {

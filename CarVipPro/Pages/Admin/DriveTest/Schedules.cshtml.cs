@@ -5,7 +5,7 @@ using CarVipPro.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CarVipPro.APrenstationLayer.Pages.Staff.DriveTest
+namespace CarVipPro.APrenstationLayer.Pages.Admin.DriveTest
 {
     public class SchedulesModel : PageModel
     {
