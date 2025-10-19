@@ -12,13 +12,15 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
     {
         private readonly IOrderService _orderService;
         private readonly IMomoService _momoService;
+        private readonly IVNPayService _vnPayService;
         private readonly ICustomerService _customers; // <-- thêm service khách hàng
 
-        public IndexModel(IOrderService orderService, IMomoService momoService, ICustomerService customers)
+        public IndexModel(IOrderService orderService, IVNPayService vnPayService, ICustomerService customers, IMomoService momoService)
         {
             _orderService = orderService;
-            _momoService = momoService;
+            _vnPayService = vnPayService;
             _customers = customers;
+            _momoService = momoService;
         }
 
         public CartModel Cart { get; set; } = new();
@@ -104,9 +106,17 @@ namespace CarVipPro.APrenstationLayer.Pages.Staff.Cart
                 return Page();
             }
 
-            if (order.PaymentMethod.Equals("MOMO"))
+            if (order.PaymentMethod.Equals("VNPAY"))
             {
                 // Create Payment Url
+                string url = _vnPayService.createVNPayUrl(order.Id, order.Total);
+                if (!url.IsNullOrEmpty())
+                {
+                    return Redirect(url);
+                }
+            }
+            else if (order.PaymentMethod.Equals("MOMO"))
+            {
                 var momoResponse = await _momoService.CreatePaymentAsync(order.Id, order.Total);
 
                 if (momoResponse != null && !momoResponse.PayUrl.IsNullOrEmpty())

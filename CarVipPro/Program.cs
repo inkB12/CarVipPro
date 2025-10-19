@@ -22,6 +22,9 @@ namespace CarVipPro
             // Kết nối Momo 
             builder.Services.Configure<MomoOptionDTO>(builder.Configuration.GetSection("MomoApi"));
 
+            // Lấy thông tin VNPAY
+            builder.Services.Configure<VnPaySettings>(builder.Configuration.GetSection("VnPaySettings"));
+
             //DI
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
@@ -76,6 +79,7 @@ namespace CarVipPro
             builder.Services.AddScoped<IElectricVehicleService, ElectricVehicleService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IMomoService, MomoService>();
+            builder.Services.AddScoped<IVNPayService, VNPayService>();
 
 
             // SignalR
