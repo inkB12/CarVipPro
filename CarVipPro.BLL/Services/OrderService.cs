@@ -34,7 +34,7 @@ namespace CarVipPro.BLL.Services
                 return (false, "No items", null);
 
             var method = (paymentMethod ?? "CASH").ToUpperInvariant();
-            if (method is not ("CASH" or "MOMO" or "INSTALLMENT"))
+            if (method is not ("CASH" or "MOMO" or "INSTALLMENT" or "VNPAY"))
                 return (false, "Invalid payment method", null);
 
             var staff = await _accounts.GetByIdAsync(staffAccountId);
