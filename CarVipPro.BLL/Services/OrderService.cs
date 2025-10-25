@@ -60,7 +60,7 @@ namespace CarVipPro.BLL.Services
             {
                 CustomerId = customerId,
                 AccountId = staffAccountId,
-                DateTime = DateTime.UtcNow,
+                DateTime = DateTime.Now,
                 Total = 0m,
                 PaymentMethod = method,
                 Status = "COMPLETED"   // thanh toán luôn
